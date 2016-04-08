@@ -17,7 +17,6 @@
   <ItemGroup>
     <DnxInvisibleContent Include="bower.json" />
     <DnxInvisibleContent Include=".bowerrc" />
-    <DnxInvisibleContent Include="package.json" />
   </ItemGroup>
   <ItemGroup>
     <DnxInvisibleFolder Include=".idea\" />
