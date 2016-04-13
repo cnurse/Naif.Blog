@@ -3,6 +3,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Naif.Blog.Services;
 
 namespace Naif.Blog
 {
@@ -23,6 +24,9 @@ namespace Naif.Blog
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCaching();
+            services.AddTransient<IBlogRepository, XmlBlogRepository>();
+
             services.AddMvc();
         }
 
@@ -54,3 +58,4 @@ namespace Naif.Blog
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }
+

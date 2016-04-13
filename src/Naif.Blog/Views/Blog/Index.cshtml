@@ -1,4 +1,12 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Naif.Blog.Models;
+
+@model IEnumerable<Post>
+
+@{
+    foreach (var post in Model)
+    {
+        <h1>@post.Title</h1>
+        <p>@post.Excerpt</p>
+    }
 }
 
