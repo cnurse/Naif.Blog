@@ -3,6 +3,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Naif.Blog.Routing;
 using Naif.Blog.Services;
 
 namespace Naif.Blog
@@ -49,8 +50,9 @@ namespace Naif.Blog
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Blog}/{action=Index}/{id?}");
+                        name: "default",
+                        template: "{controller=Blog}/{action=Index}/{id?}")
+                    .MapMetaWeblogRoute();
             });
         }
 

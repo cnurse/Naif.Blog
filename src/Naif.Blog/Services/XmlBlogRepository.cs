@@ -25,6 +25,13 @@ namespace Naif.Blog.Services
             _postsFolder = env.WebRootPath + "/posts/";
         }
 
+        public void Delete(Post post)
+        {
+            string file = Path.Combine(_postsFolder, post.ID + ".xml");
+            File.Delete(file);
+            _logger.LogInformation($"{_postsCacheKey} cleared.");
+        }
+
         public IEnumerable<Post> GetAll()
         {
             IEnumerable<Post> posts;
@@ -46,6 +53,39 @@ namespace Naif.Blog.Services
             }
 
             return posts;
+        }
+
+        public void Save(Post post)
+        {
+            string file = Path.Combine(_postsFolder, post.ID + ".xml");
+            post.LastModified = DateTime.UtcNow;
+
+            XDocument doc = new XDocument(
+                            new XElement("post",
+                                new XElement("title", post.Title),
+                                new XElement("slug", post.Slug),
+                                new XElement("author", post.Author),
+                                new XElement("pubDate", post.PubDate.ToString("yyyy-MM-dd HH:mm:ss")),
+                                new XElement("lastModified", post.LastModified.ToString("yyyy-MM-dd HH:mm:ss")),
+                                new XElement("excerpt", post.Excerpt),
+                                new XElement("content", post.Content),
+                                new XElement("ispublished", post.IsPublished)
+                            ));
+
+            _memoryCache.Remove(_postsCacheKey);
+
+            if (!File.Exists(file)) // New post
+            {
+                _logger.LogInformation($"New Post - {post.ID} created.");
+            }
+            else
+            {
+                _logger.LogInformation($"Post - {post.ID} updated.");
+            }
+
+            _logger.LogInformation($"{_postsCacheKey} cleared.");
+
+            //doc.Save(file);
         }
 
         private IEnumerable<Post> GetPosts()
