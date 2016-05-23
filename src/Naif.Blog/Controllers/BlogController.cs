@@ -3,18 +3,14 @@ using Naif.Blog.Services;
 
 namespace Naif.Blog.Controllers
 {
-    public class BlogController : Controller
+    public class BlogController : BaseController
     {
-        private IBlogRepository _blogRepository;
 
-        public BlogController(IBlogRepository blogRepository)
-        {
-            _blogRepository = blogRepository;
-        }
+        public BlogController(IBlogRepository blogRepository) : base(blogRepository) { }
 
         public IActionResult Index()
         {
-            return View(_blogRepository.GetAll());
+            return View(BlogRepository.GetAll());
         }
     }
 }

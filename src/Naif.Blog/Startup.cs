@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Naif.Blog.Framework;
+using Naif.Blog.Models;
 using Naif.Blog.Routing;
 using Naif.Blog.Services;
 
@@ -28,7 +31,16 @@ namespace Naif.Blog
             services.AddCaching();
             services.AddTransient<IBlogRepository, XmlBlogRepository>();
 
+            services.AddOptions();
+
+            services.Configure<BlogOptions>(Configuration.GetSection("BlogOptions"));
+
             services.AddMvc();
+
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
+                options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

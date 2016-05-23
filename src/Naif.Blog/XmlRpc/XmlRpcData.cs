@@ -44,6 +44,10 @@ namespace Naif.Blog.XmlRpc
             {
                 return DateTime.ParseExact(value.Value, formats, CultureInfo.InvariantCulture, DateTimeStyles.None);
             }
+            else if (dataType== "base64")
+            {
+                return Convert.FromBase64String(value.Value);
+            }
             else if (dataType == "array")
             {
                 var entries = value.Element("array").Element("data").Elements("value");
@@ -51,7 +55,7 @@ namespace Naif.Blog.XmlRpc
                 int index = 0;
                 foreach (var entry in entries)
                 {
-                    var propertyValue = XmlRpcData.DeserialiseValue(entry, targetType.GetElementType());
+                    var propertyValue = DeserialiseValue(entry, targetType.GetElementType());
                     targetArray.SetValue(propertyValue, index);
                     index++;
                 }
@@ -64,11 +68,24 @@ namespace Naif.Blog.XmlRpc
                 var propertyInfos = targetType.GetProperties();
                 foreach (var member in members)
                 {
-                    var propertyInfo = propertyInfos.SingleOrDefault(x => x.Name == member.Element("name").Value);
-                    if (propertyInfo != null)
+                    foreach(var propertyInfo in propertyInfos)
                     {
-                        var propertyValue = XmlRpcData.DeserialiseValue(member.Element("value"), propertyInfo.PropertyType);
-                        propertyInfo.SetValue(targetObject, propertyValue, null);
+                        if(propertyInfo.Name == member.Element("name").Value)
+                        {
+                            SetPropertyValue(propertyInfo, targetObject, member);
+                        }
+                        else
+                        {
+                            var attribute = propertyInfo.GetCustomAttribute(typeof(XmlRpcPropertyAttribute));
+                            if (attribute != null)
+                            {
+                                var xmlRpcAttribute = attribute as XmlRpcPropertyAttribute;
+                                if (xmlRpcAttribute != null && xmlRpcAttribute.Name == member.Element("name").Value)
+                                {
+                                    SetPropertyValue(propertyInfo, targetObject, member);
+                                }
+                            }
+                        }
                     }
                 }
                 return targetObject;
@@ -77,6 +94,12 @@ namespace Naif.Blog.XmlRpc
             {
                 throw new ArgumentException(String.Format("The supplied XML-RPC value '{0}' is not recognised", dataType));
             }
+        }
+
+        private static void SetPropertyValue(PropertyInfo propertyInfo, object targetObject, XElement member)
+        {
+            var propertyValue = DeserialiseValue(member.Element("value"), propertyInfo.PropertyType);
+            propertyInfo.SetValue(targetObject, propertyValue, null);
         }
 
         public static XElement SerialiseValue(object value)

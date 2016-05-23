@@ -9,6 +9,8 @@ namespace Naif.Blog.Services
 
         IEnumerable<Post> GetAll();
 
+        Dictionary<string, int> GetCategories();
+
         void Save(Post post);
     }
 }

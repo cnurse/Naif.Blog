@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNet.Hosting;
 using System.IO;
 using System.Xml.Linq;
+using System.Linq;
 
 namespace Naif.Blog.Services
 {
@@ -55,6 +56,17 @@ namespace Naif.Blog.Services
             return posts;
         }
 
+        public Dictionary<string, int> GetCategories()
+        {
+            var result = GetAll().Where(p => ((p.IsPublished && p.PubDate <= DateTime.UtcNow)))
+                .SelectMany(post => post.Categories)
+                .GroupBy(category => category, (category, items) => new { Category = category, Count = items.Count() })
+                .OrderBy(x => x.Category)
+                .ToDictionary(x => x.Category, x => x.Count);
+
+            return result;
+        }
+
         public void Save(Post post)
         {
             string file = Path.Combine(_postsFolder, post.ID + ".xml");
@@ -69,8 +81,16 @@ namespace Naif.Blog.Services
                                 new XElement("lastModified", post.LastModified.ToString("yyyy-MM-dd HH:mm:ss")),
                                 new XElement("excerpt", post.Excerpt),
                                 new XElement("content", post.Content),
+                                new XElement("categories", string.Empty),
+                                new XElement("tags", post.Keywords),
                                 new XElement("ispublished", post.IsPublished)
                             ));
+
+            XElement categories = doc.Document.Element("post").Element("categories");
+            foreach (string category in post.Categories)
+            {
+                categories.Add(new XElement("category", category));
+            }
 
             _memoryCache.Remove(_postsCacheKey);
 
@@ -85,7 +105,10 @@ namespace Naif.Blog.Services
 
             _logger.LogInformation($"{_postsCacheKey} cleared.");
 
-            //doc.Save(file);
+            using(var stream = new FileStream(file, FileMode.Create))
+            {
+                doc.Save(stream);
+            }
         }
 
         private IEnumerable<Post> GetPosts()
@@ -109,12 +132,14 @@ namespace Naif.Blog.Services
                                     Author = ReadValue(doc, "author"),
                                     Excerpt = ReadValue(doc, "excerpt"),
                                     Content = ReadValue(doc, "content"),
+                                    Keywords = ReadValue(doc, "tags"),
                                     Slug = ReadValue(doc, "slug").ToLowerInvariant(),
                                     PubDate = DateTime.Parse(ReadValue(doc, "pubDate")),
                                     LastModified = DateTime.Parse(ReadValue(doc, "lastModified", DateTime.Now.ToString())),
                                     IsPublished = bool.Parse(ReadValue(doc, "ispublished", "true")),
                                 };
 
+                LoadCategories(post, doc);
                 list.Add(post);
             }
 
@@ -124,6 +149,22 @@ namespace Naif.Blog.Services
             }
 
             return list;
+        }
+
+        private static void LoadCategories(Post post, XElement doc)
+        {
+            XElement categories = doc.Element("categories");
+            if (categories == null)
+                return;
+
+            List<string> list = new List<string>();
+
+            foreach (var node in categories.Elements("category"))
+            {
+                list.Add(node.Value);
+            }
+
+            post.Categories = list.ToArray();
         }
 
         private static string ReadValue(XElement doc, XName name, string defaultValue = "")
