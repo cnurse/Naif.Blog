@@ -1,7 +1,7 @@
 ﻿//Inspired by the work of Michael McKenna
 //https://michael-mckenna.com/implementing-xml-rpc-services-in-asp-net-mvc/
 
-using Microsoft.AspNet.Routing;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Naif.Blog.Routing

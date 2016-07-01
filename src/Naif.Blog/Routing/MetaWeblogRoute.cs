@@ -1,21 +1,20 @@
 ﻿//Inspired by the work of Michael McKenna
 //https://michael-mckenna.com/implementing-xml-rpc-services-in-asp-net-mvc/
-using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Routing.Template;
+using Microsoft.AspNetCore.Routing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Naif.Blog.Routing
 {
-    public class MetaWeblogRoute : TemplateRoute
+    public class MetaWeblogRoute : Route
     {
         public MetaWeblogRoute(IRouter target,
                              string routeName,
                              string routeTemplate,
-                             IDictionary<string, object> defaults,
+							 RouteValueDictionary defaults,
                              IDictionary<string, object> constraints,
-                             IDictionary<string, object> dataTokens,
+							 RouteValueDictionary dataTokens,
                              IInlineConstraintResolver inlineConstraintResolver)
             : base(target, routeName, routeTemplate, defaults, 
                   constraints, dataTokens, inlineConstraintResolver)

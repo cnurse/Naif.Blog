@@ -2,10 +2,4 @@
 
 @model IEnumerable<Post>
 
-@{
-    foreach (var post in Model)
-    {
-        <h1>@post.Title - Theme 1</h1>
-        <p>@post.Excerpt</p>
-    }
-}
+@await Component.InvokeAsync("List", new { list = Model })

@@ -1,0 +1,33 @@
+﻿@using Naif.Blog.Models;
+
+@model Post
+
+<article class="post">
+    <header>
+        <h2>@Model.Title</h2>
+        <div>
+            Category:
+            @foreach (var category in Model.Categories)
+            {
+                <span>@Html.ActionLink(category, "ViewCategory", "Blog", new { category = category })</span>
+            }
+        </div>
+        <div>
+            Tags:
+            @foreach (var tag in Model.Tags)
+            {
+                <span>@Html.ActionLink(tag, "ViewTag", "Blog", new { tag = tag })</span>
+            }
+        </div>
+        <div>Last Modified: @Model.LastModified.ToString("MMM d yyyy")</div>
+    </header>
+    <div class="info">
+        <div class="date">
+            <span class="month">@Model.PubDate.ToString("MMM")</span>
+            <span class="day">@Model.PubDate.Day</span>
+            <span class="year">@Model.PubDate.Year</span>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+    <section>@Html.Raw(Model.Content)</section>
+</article>

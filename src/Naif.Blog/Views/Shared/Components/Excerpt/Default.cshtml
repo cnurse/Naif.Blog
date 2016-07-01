@@ -1,0 +1,21 @@
+﻿@using Naif.Blog.Models;
+
+@model Post
+
+<article class="excerpt">
+    <header>
+        <h3>@Html.ActionLink(Model.Title, "ViewPost", "Blog", new { slug = Model.Slug })</h3>
+    </header>
+    <section>
+        @Model.Excerpt
+    </section>
+    <div class="info">
+        <div class="date">
+            <span class="month">@Model.PubDate.ToString("MMM")</span>
+            <span class="day">@Model.PubDate.Day</span>
+            <span class="year">@Model.PubDate.Year</span>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</article>
+<hr/>

@@ -1,0 +1,5 @@
+﻿@using Naif.Blog.Models;
+
+@model Post
+
+@await Component.InvokeAsync("Post", new { post = Model })

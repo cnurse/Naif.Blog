@@ -1,7 +1,7 @@
 ﻿//Inspired by the work of Michael McKenna
 //https://michael-mckenna.com/implementing-xml-rpc-services-in-asp-net-mvc/
 
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Xml.Linq;
@@ -13,7 +13,7 @@ namespace Naif.Blog.XmlRpc
         public XmlRpcResult(object data)
         {
             //Set content type to xml
-            ContentType = new MediaTypeHeaderValue("text/xml");
+            ContentType = "text/xml";
 
             //Serialise data into base.Content
             Content = SerialiseXmlRpcResponse(data).ToString();

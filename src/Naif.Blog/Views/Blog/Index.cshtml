@@ -1,11 +1,9 @@
 ﻿@using Naif.Blog.Models;
+@using Naif.Blog.ViewComponents;
 
 @model IEnumerable<Post>
 
-@{
-    foreach (var post in Model)
-    {
-        <h1>@post.Title - No Theme</h1>
-        <p>@post.Excerpt</p>
-    }
-}
+<section>
+    <h2>Articles</h2>
+    @await Component.InvokeAsync(typeof(ListViewComponent), new { list = Model })
+</section>

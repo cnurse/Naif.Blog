@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Models;
 using Naif.Blog.Services;
 using Naif.Blog.XmlRpc;

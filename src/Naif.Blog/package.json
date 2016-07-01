@@ -3,7 +3,8 @@
   "name": "Naif.Blog",
   "private": true,
   "dependencies": {
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "jqcloud-npm": "^3.0.3"
   },
   "devDependencies": {
     "gulp": "^3.9.0",

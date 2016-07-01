@@ -11,6 +11,8 @@ namespace Naif.Blog.Services
 
         Dictionary<string, int> GetCategories();
 
+        Dictionary<string, int> GetTags();
+
         void Save(Post post);
     }
 }

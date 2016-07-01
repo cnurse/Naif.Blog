@@ -46,5 +46,18 @@ namespace Naif.Blog.Models
 
         public bool IsPublished { get; set; }
 
+        public List<string> Tags
+        {
+            get
+            {
+                List<string> tags = new List<string>();
+                foreach(var tag in Keywords.Split(','))
+                {
+                    tags.Add(tag.Trim());
+                }
+                return tags;
+            }
+        }
+
     }
 }

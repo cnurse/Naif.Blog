@@ -1,22 +1,24 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc.Razor;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Naif.Blog.Framework;
 using Naif.Blog.Models;
-using Naif.Blog.Routing;
 using Naif.Blog.Services;
+using Microsoft.AspNetCore.Builder;
+using System.IO;
+using Naif.Blog.Routing;
 
 namespace Naif.Blog
 {
-    public class Startup
+	public class Startup
     {
         public Startup(IHostingEnvironment env)
         {
             // Set up configuration providers.
             var builder = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
@@ -28,7 +30,7 @@ namespace Naif.Blog
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCaching();
+            services.AddMemoryCache();
             services.AddTransient<IBlogRepository, XmlBlogRepository>();
 
             services.AddOptions();
@@ -55,21 +57,51 @@ namespace Naif.Blog
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseIISPlatformHandler();
-
             app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                        name: "default",
-                        template: "{controller=Blog}/{action=Index}/{id?}")
+				routes.MapRoute(
+						name: "blogPost",
+						template: "post/{*slug}",
+						defaults: new {
+							controller = "Blog",
+							action = "ViewPost"
+						})
+					.MapRoute(
+						name: "blogCategory",
+						template: "category/{*category}",
+						defaults: new
+						{
+							controller = "Blog",
+							action = "ViewCategory"
+						})
+					.MapRoute(
+						name: "blogTag",
+						template: "tag/{*tag}",
+						defaults: new
+						{
+							controller = "Blog",
+							action = "ViewTag"
+						})
+					.MapRoute(
+						name: "default",
+						template: "{controller=Blog}/{action=Index}/{id?}")
                     .MapMetaWeblogRoute();
             });
         }
 
-        // Entry point for the application.
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+		// Entry point for the application.
+		public static void Main(string[] args)
+		{
+			var host = new WebHostBuilder()
+				.UseKestrel()
+				.UseIISIntegration()
+				.UseStartup<Startup>()
+				.Build();
+
+			host.Run();
+		}
     }
 }
 

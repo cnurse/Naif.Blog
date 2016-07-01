@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Services;
 using System;
 using System.Collections.Generic;

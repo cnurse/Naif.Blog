@@ -1,6 +1,6 @@
 ﻿//Inspired by the work of Michael McKenna
 //https://michael-mckenna.com/implementing-xml-rpc-services-in-asp-net-mvc/
-using Microsoft.AspNet.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 using System.Xml.Linq;
 

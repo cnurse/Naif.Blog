@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Naif.Blog.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.AspNet.Hosting;
 using System.IO;
 using System.Xml.Linq;
 using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Naif.Blog.Services
 {
-    public class XmlBlogRepository : IBlogRepository
+	public class XmlBlogRepository : IBlogRepository
     {
         private ILogger _logger;
         private IMemoryCache _memoryCache;
@@ -63,6 +63,17 @@ namespace Naif.Blog.Services
                 .GroupBy(category => category, (category, items) => new { Category = category, Count = items.Count() })
                 .OrderBy(x => x.Category)
                 .ToDictionary(x => x.Category, x => x.Count);
+
+            return result;
+        }
+
+        public Dictionary<string, int> GetTags()
+        {
+            var result = GetAll().Where(p => ((p.IsPublished && p.PubDate <= DateTime.UtcNow)))
+                .SelectMany(post => post.Tags)
+                .GroupBy(tag => tag, (tag, items) => new { Tag = tag, Count = items.Count() })
+                .OrderBy(x => x.Tag)
+                .ToDictionary(x => x.Tag, x => x.Count);
 
             return result;
         }

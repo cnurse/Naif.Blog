@@ -1,0 +1,17 @@
+﻿@model Dictionary<string, int>
+
+<section>
+    <h2>Categories</h2>
+    @if(Model.Count > 0)
+    {
+        <ul>
+            @{ 
+                foreach(var category in Model)
+                {
+                    var linkText = $"{category.Key} - ({category.Value})";
+                    <li><h4>@Html.ActionLink(linkText, "ViewCategory", "Blog", new { category = category.Key })</h4></li>
+                }
+            }
+        </ul>
+    }
+</section>

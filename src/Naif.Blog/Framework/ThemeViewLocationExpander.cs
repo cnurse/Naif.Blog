@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNet.Mvc.Razor;
 using System.Linq;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Naif.Blog.Models;
+using Microsoft.Extensions.Options;
 
 namespace Naif.Blog.Framework
 {
-    public class ThemeViewLocationExpander : IViewLocationExpander
+	public class ThemeViewLocationExpander : IViewLocationExpander
     {
         public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
         {
