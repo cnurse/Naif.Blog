@@ -1,21 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Services;
+using Naif.Blog.Framework;
 using System.Threading.Tasks;
 
 namespace Naif.Blog.ViewComponents
 {
-    public class CategoryListViewComponent : ViewComponent
+    public class CategoryListViewComponent : BaseViewComponent
     {
-        private IBlogRepository _blogRepository;
-
-        public CategoryListViewComponent(IBlogRepository blogRepository)
-        {
-            _blogRepository = blogRepository;
-        }
+        public CategoryListViewComponent(IBlogRepository blogRepository, IApplicationContext appContext)
+            : base(blogRepository, appContext) { }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View(_blogRepository.GetCategories());
+            return View(BlogRepository.GetCategories(Blog.Id));
         }
     }
 }

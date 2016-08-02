@@ -32,10 +32,7 @@ namespace Naif.Blog
         {
             services.AddMemoryCache();
             services.AddTransient<IBlogRepository, XmlBlogRepository>();
-
-            services.AddOptions();
-
-            services.Configure<BlogOptions>(Configuration.GetSection("BlogOptions"));
+            services.AddScoped<IApplicationContext, ApplicationContext>();
 
             services.AddMvc();
 
@@ -58,6 +55,8 @@ namespace Naif.Blog
             }
 
             app.UseStaticFiles();
+
+            app.UseApplicationContext();
 
             app.UseMvc(routes =>
             {
@@ -104,4 +103,3 @@ namespace Naif.Blog
 		}
     }
 }
-

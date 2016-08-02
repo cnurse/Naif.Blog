@@ -8,14 +8,25 @@ namespace Naif.Blog.Models
     {
         public Post()
         {
-            ID = Guid.NewGuid().ToString();
+            PostId = Guid.NewGuid().ToString();
+            BlogId = String.Empty;
             PubDate = DateTime.UtcNow;
             LastModified = DateTime.UtcNow;
             IsPublished = true;
+            Keywords = String.Empty;
+            Title = String.Empty;
+            Author = String.Empty;
+            Slug = String.Empty;
+            Excerpt = String.Empty;
+            Content = String.Empty;
+            Categories = new string[] { };
         }
 
+        [XmlRpcProperty("blogId")]
+        public string BlogId { get; set; }
+
         [XmlRpcProperty("postid")]
-        public string ID { get; set; }
+        public string PostId { get; set; }
 
         [XmlRpcProperty("title")]
         public string Title { get; set; }

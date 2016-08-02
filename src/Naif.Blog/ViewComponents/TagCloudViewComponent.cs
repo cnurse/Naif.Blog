@@ -1,21 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Naif.Blog.Framework;
 using Naif.Blog.Services;
 using System.Threading.Tasks;
 
 namespace Naif.Blog.ViewComponents
 {
-    public class TagCloudViewComponent : ViewComponent
+    public class TagCloudViewComponent : BaseViewComponent
     {
-        private IBlogRepository _blogRepository;
-
-        public TagCloudViewComponent(IBlogRepository blogRepository)
-        {
-            _blogRepository = blogRepository;
-        }
+        public TagCloudViewComponent(IBlogRepository blogRepository, IApplicationContext appContext)
+            : base(blogRepository, appContext) { }
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View(_blogRepository.GetTags());
+            return View(BlogRepository.GetTags(Blog.Id));
         }
 
     }

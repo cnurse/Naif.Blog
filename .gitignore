@@ -221,6 +221,9 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
+.idea/
+.idea.Naif.Blog/
+
 # Visual Studio LightSwitch build output
 **/*.HTMLClient/GeneratedArtifacts
 **/*.DesktopClient/GeneratedArtifacts
@@ -234,5 +237,6 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
 /src/Naif.Blog/wwwroot/css
 /src/Naif.Blog/wwwroot/lib

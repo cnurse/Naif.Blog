@@ -22,13 +22,12 @@ namespace Naif.Blog.Framework
 
         public void PopulateValues(ViewLocationExpanderContext context)
         {
-            var optionsAccessor = context.ActionContext.HttpContext.RequestServices
-                        .GetService(typeof(IOptions<BlogOptions>)) as IOptions<BlogOptions>;
-            var options = optionsAccessor.Value;
+            var appContext = context.ActionContext.HttpContext.RequestServices
+                        .GetService(typeof(IApplicationContext)) as IApplicationContext;
 
-            if (!string.IsNullOrEmpty(options.Theme))
+            if (!string.IsNullOrEmpty(appContext.CurrentBlog.Theme))
             {
-                context.Values["theme"] = options.Theme;
+                context.Values["theme"] = appContext.CurrentBlog.Theme;
             }
         }
     }

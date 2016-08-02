@@ -1,11 +1,9 @@
-﻿@using Microsoft.Extensions.Options
-@using Naif.Blog.Models
+﻿@using Naif.Blog.Models
 
-@inject IOptions<BlogOptions> BlogOptionsAccessor
+@model Blog
 
 @{
-    var options = BlogOptionsAccessor.Value;
-    var copyright = $"&copy; {DateTime.Now.Year} - {options.Title}";
+    var copyright = $"&copy; {DateTime.Now.Year} - {Model.Title}";
 }
 
 <p>@Html.Raw(copyright)</p>

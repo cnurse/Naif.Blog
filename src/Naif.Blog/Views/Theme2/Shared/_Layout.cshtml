@@ -1,18 +1,15 @@
 ﻿@using Microsoft.Extensions.Options
 @using Naif.Blog.Models
 
-@inject IOptions<BlogOptions> BlogOptionsAccessor
+@model Blog
 
-@{
-    var options = BlogOptionsAccessor.Value;
-}
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@options.Title</title>
+    <title>@Model.Title</title>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <environment names="Development">
@@ -36,7 +33,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-controller="Blog" asp-action="Index" class="navbar-brand">@options.Title</a>
+                <a asp-controller="Blog" asp-action="Index" class="navbar-brand">@Model.Title</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">

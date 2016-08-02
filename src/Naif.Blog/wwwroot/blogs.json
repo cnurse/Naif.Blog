@@ -1,0 +1,18 @@
+﻿[
+  {
+    "Id": "Blog1",
+    "Url": "lvh.me:56288",
+    "Title": "Naif.Blog",
+    "ByLine": "A simple ASP.NET Blog Application",
+    "Theme": "",
+    "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
+  },
+  {
+    "Id": "Blog2",
+    "Url": "lvh.me:56289",
+    "Title": "Naif.Blog 2",
+    "ByLine": "A simple ASP.NET Blog Application",
+    "Theme": "",
+    "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
+  }
+] 

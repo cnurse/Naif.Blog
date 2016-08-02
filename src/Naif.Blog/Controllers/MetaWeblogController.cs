@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Naif.Blog.Framework;
 using Naif.Blog.Models;
 using Naif.Blog.Services;
 using Naif.Blog.XmlRpc;
@@ -15,17 +16,19 @@ namespace Naif.Blog.Controllers
     {
         private string _rootPath;
 
-        public MetaWeblogController(IHostingEnvironment env, IBlogRepository blogRepository) :base(blogRepository)
+        public MetaWeblogController(IHostingEnvironment env, IBlogRepository blogRepository, IApplicationContext appContext) 
+            :base(blogRepository, appContext)
         {
             _rootPath = env.WebRootPath;
         }
 
         public IActionResult DeletePost(string key, string postid, string username, string password, bool publish)
         {
-            Post post = BlogRepository.GetAll().FirstOrDefault(p => p.ID == postid);
+            Post post = BlogRepository.GetAll(Blog.Id).FirstOrDefault(p => p.PostId == postid);
 
             if (post != null)
             {
+                post.BlogId = Blog.Id;
                 BlogRepository.Delete(post);
             }
 
@@ -34,7 +37,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult EditPost(string postid, string username, string password, Post post, bool publish)
         {
-            Post match = BlogRepository.GetAll().FirstOrDefault(p => p.ID == postid);
+            Post match = BlogRepository.GetAll(Blog.Id).FirstOrDefault(p => p.PostId == postid);
 
             if (match != null)
             {
@@ -59,7 +62,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult GetCategories(string blogid, string username, string password)
         {
-            var categories = BlogRepository.GetCategories();
+            var categories = BlogRepository.GetCategories(blogid);
 
             var list = new List<object>();
 
@@ -73,7 +76,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult GetPost(string postid, string username, string password)
         {
-            var post = BlogRepository.GetAll().FirstOrDefault(p => p.ID == postid);
+            var post = BlogRepository.GetAll(Blog.Id).FirstOrDefault(p => p.PostId == postid);
 
             var info = new
                     {
@@ -83,7 +86,7 @@ namespace Naif.Blog.Controllers
                         wp_slug = post.Slug,
                         categories = post.Categories.ToArray(),
                         mt_keywords = post.Keywords,
-                        postid = post.ID,
+                        postid = post.PostId,
                         mt_excerpt = post.Excerpt
                     };
 
@@ -94,7 +97,7 @@ namespace Naif.Blog.Controllers
         {
             List<object> list = new List<object>();
 
-            foreach (var post in BlogRepository.GetAll().Take(numberOfPosts))
+            foreach (var post in BlogRepository.GetAll(blogid).Take(numberOfPosts))
             {
                 var info = new
                             {
@@ -102,7 +105,7 @@ namespace Naif.Blog.Controllers
                                 title = post.Title,
                                 dateCreated = post.PubDate,
                                 wp_slug = post.Slug,
-                                postid = post.ID
+                                postid = post.PostId
                             };
 
                 list.Add(info);
@@ -117,9 +120,9 @@ namespace Naif.Blog.Controllers
                             {
                                 new
                                 {
-                                    blogid = "1",
-                                    blogName = "Naif.Blog",
-                                    url = "http://localhost:56288/"
+                                    blogid = Blog.Id,
+                                    blogName = Blog.Title,
+                                    url = Blog.Url
                                 }
                             };
             return new XmlRpcResult(blogs);
@@ -168,9 +171,10 @@ namespace Naif.Blog.Controllers
             }
 
             post.IsPublished = publish;
+            post.BlogId = blogid;
             BlogRepository.Save(post);
 
-            return new XmlRpcResult(post.ID);
+            return new XmlRpcResult(post.PostId);
         }
     }
 }

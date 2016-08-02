@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Naif.Blog.Framework;
 using Naif.Blog.Services;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,15 @@ namespace Naif.Blog.Controllers
 {
     public class BaseController : Controller
     {
-
-        protected BaseController(IBlogRepository blogRepository)
+        protected BaseController(IBlogRepository blogRepository, IApplicationContext appContext)
         {
+            Blog = appContext.CurrentBlog;
             BlogRepository = blogRepository;
         }
 
-        protected IBlogRepository BlogRepository { get; set; }
+        public Models.Blog Blog { get; }
 
+        protected IBlogRepository BlogRepository { get; set; }
 
         public string CreateSlug(string title)
         {
@@ -25,7 +27,7 @@ namespace Naif.Blog.Controllers
             title = RemoveDiacritics(title);
             title = RemoveReservedUrlCharacters(title);
 
-            if (BlogRepository.GetAll().Any(p => string.Equals(p.Slug, title, StringComparison.OrdinalIgnoreCase)))
+            if (BlogRepository.GetAll(Blog.Id).Any(p => string.Equals(p.Slug, title, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new Exception("Slug is already in use");
             }

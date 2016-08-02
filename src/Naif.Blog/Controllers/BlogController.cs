@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Naif.Blog.Framework;
 using Naif.Blog.Services;
 using System.Linq;
 
@@ -6,28 +7,31 @@ namespace Naif.Blog.Controllers
 {
 	public class BlogController : BaseController
     {
-
-        public BlogController(IBlogRepository blogRepository) : base(blogRepository) { }
+        public BlogController(IBlogRepository blogRepository, IApplicationContext appContext) 
+            : base(blogRepository, appContext) { }
 
         public IActionResult Index()
         {
-            return View("Index", BlogRepository.GetAll());
+            Blog.Posts = BlogRepository.GetAll(Blog.Id);
+            return View("Index", Blog);
         }
 
         public IActionResult ViewCategory(string category)
         {
-            return View("Index", BlogRepository.GetAll().Where(p => p.Categories.Contains(category)));
+            Blog.Posts = BlogRepository.GetAll(Blog.Id).Where(p => p.Categories.Contains(category));
+            return View("Index", Blog);
         }
 
         public IActionResult ViewPost(string slug)
         {
-            return View(BlogRepository.GetAll().Single(p => p.Slug == slug));
+            Blog.Post = BlogRepository.GetAll(Blog.Id).Single(p => p.Slug == slug);
+            return View(Blog);
         }
 
         public IActionResult ViewTag(string tag)
         {
-            return View("Index", BlogRepository.GetAll().Where(p => p.Keywords.Contains(tag)));
+            Blog.Posts = BlogRepository.GetAll(Blog.Id).Where(p => p.Keywords.Contains(tag));
+            return View("Index", Blog);
         }
-
     }
 }

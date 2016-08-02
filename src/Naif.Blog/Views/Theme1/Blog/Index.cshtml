@@ -1,5 +1,5 @@
 ﻿@using Naif.Blog.Models;
 
-@model IEnumerable<Post>
+@model Blog
 
-@await Component.InvokeAsync("List", new { list = Model })
+@await Component.InvokeAsync("List", new { list = Model.Posts })

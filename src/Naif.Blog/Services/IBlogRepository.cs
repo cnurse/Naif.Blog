@@ -7,11 +7,11 @@ namespace Naif.Blog.Services
     {
         void Delete(Post post);
 
-        IEnumerable<Post> GetAll();
+        IEnumerable<Post> GetAll(string blogId);
 
-        Dictionary<string, int> GetCategories();
+        Dictionary<string, int> GetCategories(string blogId);
 
-        Dictionary<string, int> GetTags();
+        Dictionary<string, int> GetTags(string blogId);
 
         void Save(Post post);
     }
