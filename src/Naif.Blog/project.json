@@ -5,6 +5,20 @@
 		"preserveCompilationContext": true
 	},
 
+	"runtimes": {
+		"win10-x64" : {},
+		"osx.10.12-x64" : {}
+	},
+
+	"frameworks": {
+		"netcoreapp1.0": {
+			"imports": [
+				"dotnet5.6",
+				"portable-net45+win8"
+			]
+		}
+	},
+
 	"dependencies": {
 		"Microsoft.NETCore.App": {
 			"type": "platform",
@@ -26,14 +40,5 @@
 
 	"commands": {
 		"web": "Microsoft.AspNetCore.Server.Kestrel"
-	},
-
-	"frameworks": {
-		"netcoreapp1.0": {
-			"imports": [
-				"dotnet5.6",
-				"portable-net45+win8"
-			]
-		}
 	}
 }
