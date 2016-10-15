@@ -14,5 +14,7 @@ namespace Naif.Blog.Services
         Dictionary<string, int> GetTags(string blogId);
 
         void Save(Post post);
+
+        string SaveMedia(string blogid, MediaObject media);
     }
 }

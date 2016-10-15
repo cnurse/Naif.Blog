@@ -14,12 +14,9 @@ namespace Naif.Blog.Controllers
     [XmlRpcService]
     public class MetaWeblogController : BaseController
     {
-        private string _rootPath;
-
-        public MetaWeblogController(IHostingEnvironment env, IBlogRepository blogRepository, IApplicationContext appContext) 
+        public MetaWeblogController(IBlogRepository blogRepository, IApplicationContext appContext) 
             :base(blogRepository, appContext)
         {
-            _rootPath = env.WebRootPath;
         }
 
         public IActionResult DeletePost(string key, string postid, string username, string password, bool publish)
@@ -130,24 +127,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult NewMediaObject(string blogid, string username, string password, MediaObject media)
         {
-            string extension = Path.GetExtension(media.Name);
-
-            string relative = "/posts/files/" + Guid.NewGuid();
-
-            if (string.IsNullOrWhiteSpace(extension))
-            {
-                extension = ".bin";
-            }
-            else
-            {
-                extension = "." + extension.Trim('.');
-            }
-
-            relative += extension;
-
-            string file = _rootPath + relative.Replace("/", "\\");
-
-            System.IO.File.WriteAllBytes(file, media.Bits);
+            string relative = BlogRepository.SaveMedia(blogid, media);
 
             return new XmlRpcResult(new { url = $"{Request.Scheme}://{Request.Host}{relative}" });
         }

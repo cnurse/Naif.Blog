@@ -14,5 +14,14 @@
     "ByLine": "A simple ASP.NET Blog Application",
     "Theme": "",
     "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
+  },
+  {
+    "Id": "Blog3",
+    "Url": "localhost:5000",
+    "Title": "Kestrel Blog",
+    "ByLine": "A simple ASP.NET Blog Application hosted on Kestrel",
+    "Theme": "",
+    "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
   }
+
 ] 

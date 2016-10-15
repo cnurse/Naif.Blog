@@ -31,7 +31,7 @@ namespace Naif.Blog
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            services.AddTransient<IBlogRepository, XmlBlogRepository>();
+            services.AddTransient<IBlogRepository, JsonBlogRepository>();
             services.AddScoped<IApplicationContext, ApplicationContext>();
 
             services.AddMvc();
@@ -93,9 +93,13 @@ namespace Naif.Blog
 		// Entry point for the application.
 		public static void Main(string[] args)
 		{
+            var contentRoot = Directory.GetCurrentDirectory();
+
 			var host = new WebHostBuilder()
 				.UseKestrel()
-				.UseIISIntegration()
+                .UseContentRoot(contentRoot) // Kestrel doesn't set ContentRoot by default
+                .UseWebRoot(Path.Combine(contentRoot, "wwwroot")) // Kestrel doesn't set WebRoot by default
+				//.UseIISIntegration()
 				.UseStartup<Startup>()
 				.Build();
 
