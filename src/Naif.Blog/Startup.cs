@@ -95,11 +95,16 @@ namespace Naif.Blog
 		{
             var contentRoot = Directory.GetCurrentDirectory();
 
+            var config = new ConfigurationBuilder()
+                .SetBasePath(contentRoot)
+                .AddJsonFile("hosting.json", optional: true)
+                .Build();
+
 			var host = new WebHostBuilder()
 				.UseKestrel()
+                .UseConfiguration(config)
                 .UseContentRoot(contentRoot) // Kestrel doesn't set ContentRoot by default
                 .UseWebRoot(Path.Combine(contentRoot, "wwwroot")) // Kestrel doesn't set WebRoot by default
-				//.UseIISIntegration()
 				.UseStartup<Startup>()
 				.Build();
 
