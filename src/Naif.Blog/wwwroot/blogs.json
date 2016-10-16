@@ -1,7 +1,7 @@
 ﻿[
   {
     "Id": "Blog1",
-    "Url": "lvh.me:56288",
+    "Url": "localhost:56288",
     "Title": "Naif.Blog",
     "ByLine": "A simple ASP.NET Blog Application",
     "Theme": "",
@@ -9,7 +9,7 @@
   },
   {
     "Id": "Blog2",
-    "Url": "lvh.me:56289",
+    "Url": "localhost:56289",
     "Title": "Naif.Blog 2",
     "ByLine": "A simple ASP.NET Blog Application",
     "Theme": "",
@@ -17,7 +17,7 @@
   },
   {
     "Id": "Blog3",
-    "Url": "localhost:5000",
+    "Url": "localhost:56287",
     "Title": "Kestrel Blog",
     "ByLine": "A simple ASP.NET Blog Application hosted on Kestrel",
     "Theme": "",
