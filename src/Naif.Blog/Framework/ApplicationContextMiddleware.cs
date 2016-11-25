@@ -19,11 +19,11 @@ namespace Naif.Blog.Framework
     /// </summary>
     public class ApplicationContextMiddleware
     {
-        RequestDelegate _next;
-        private ILogger _logger;
-        private IMemoryCache _memoryCache;
+        private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
+        private readonly IMemoryCache _memoryCache;
         private string _blogsCacheKey = "blogs";
-        private string _blogsFile;
+        private readonly string _blogsFile;
 
         public ApplicationContextMiddleware(RequestDelegate next, 
                                     IHostingEnvironment env, 
@@ -45,7 +45,7 @@ namespace Naif.Blog.Framework
 
         private IEnumerable<Models.Blog> GetBlogs()
         {
-            IEnumerable<Models.Blog> blogs;
+            IList<Models.Blog> blogs;
 
             if (!_memoryCache.TryGetValue(_blogsCacheKey, out blogs))
             {
@@ -53,7 +53,7 @@ namespace Naif.Blog.Framework
                 using (StreamReader reader = File.OpenText(_blogsFile))
                 {
                     var json = reader.ReadToEnd();
-                    blogs = JsonConvert.DeserializeObject<IEnumerable<Models.Blog>>(json);
+                    blogs = JsonConvert.DeserializeObject<IList<Models.Blog>>(json);
                 }
 
                 // store in the cache

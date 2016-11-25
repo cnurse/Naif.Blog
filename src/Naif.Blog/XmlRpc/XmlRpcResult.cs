@@ -2,7 +2,6 @@
 //https://michael-mckenna.com/implementing-xml-rpc-services-in-asp-net-mvc/
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using System;
 using System.Xml.Linq;
 

@@ -42,7 +42,7 @@ namespace Naif.Blog.XmlRpc
             }
             else if (dataType == "dateTime.iso8601")
             {
-                return DateTime.ParseExact(value.Value, formats, CultureInfo.InvariantCulture, DateTimeStyles.None);
+                return DateTime.ParseExact(value.Value, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None);
             }
             else if (dataType== "base64")
             {
@@ -51,9 +51,10 @@ namespace Naif.Blog.XmlRpc
             else if (dataType == "array")
             {
                 var entries = value.Element("array").Element("data").Elements("value");
-                Array targetArray = Array.CreateInstance(targetType.GetElementType(), entries.Count());
+                var xElements = entries as XElement[] ?? entries.ToArray();
+                var targetArray = Array.CreateInstance(targetType.GetElementType(), xElements.Length);
                 int index = 0;
-                foreach (var entry in entries)
+                foreach (var entry in xElements)
                 {
                     var propertyValue = DeserialiseValue(entry, targetType.GetElementType());
                     targetArray.SetValue(propertyValue, index);
@@ -77,13 +78,10 @@ namespace Naif.Blog.XmlRpc
                         else
                         {
                             var attribute = propertyInfo.GetCustomAttribute(typeof(XmlRpcPropertyAttribute));
-                            if (attribute != null)
+                            var xmlRpcAttribute = attribute as XmlRpcPropertyAttribute;
+                            if (xmlRpcAttribute != null && xmlRpcAttribute.Name == member.Element("name").Value)
                             {
-                                var xmlRpcAttribute = attribute as XmlRpcPropertyAttribute;
-                                if (xmlRpcAttribute != null && xmlRpcAttribute.Name == member.Element("name").Value)
-                                {
-                                    SetPropertyValue(propertyInfo, targetObject, member);
-                                }
+                                SetPropertyValue(propertyInfo, targetObject, member);
                             }
                         }
                     }
@@ -114,7 +112,7 @@ namespace Naif.Blog.XmlRpc
             {
                 root.Add(SerialisePrimitive(value));
             }
-            else if (value.GetType() is IEnumerable || value.GetType().IsArray)
+            else if (value.GetType().IsArray)
             {
                 root.Add(SerialiseEnumerable(value as IEnumerable));
             }
@@ -128,7 +126,7 @@ namespace Naif.Blog.XmlRpc
 
         private static bool IsPrimitiveXmlRpcType(Type type)
         {
-            return type.GetTypeInfo().IsPrimitive || type.Equals(typeof(String)) || type.Equals(typeof(DateTime)) || type.Equals(typeof(Int64));
+            return type.GetTypeInfo().IsPrimitive || type == typeof(String) || type == typeof(DateTime) || type == typeof(Int64);
         }
 
         private static XElement SerialiseStrut(object value)
@@ -196,7 +194,7 @@ namespace Naif.Blog.XmlRpc
 
         //iso8601 often come in slightly different flavours rather than the standard "s" that string.format supports.
         //http://stackoverflow.com/a/17752389
-        static readonly string[] formats = { 
+        static readonly string[] Formats = {
             // Basic formats
             "yyyyMMddTHHmmsszzz",
             "yyyyMMddTHHmmsszz",

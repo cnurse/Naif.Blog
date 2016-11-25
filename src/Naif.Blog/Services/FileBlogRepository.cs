@@ -11,10 +11,9 @@ namespace Naif.Blog.Services
 {
     public abstract class FileBlogRepository : IBlogRepository
     {
-        string _filesFolder;
+        readonly string _filesFolder;
 
-        public FileBlogRepository(IHostingEnvironment env,
-                                IMemoryCache memoryCache)
+        protected FileBlogRepository(IHostingEnvironment env, IMemoryCache memoryCache)
         {
             MemoryCache = memoryCache;
             PostsCacheKey = "{0}_posts";
@@ -29,16 +28,16 @@ namespace Naif.Blog.Services
 
         protected IMemoryCache MemoryCache { get; set; }
 
-        protected string PostsCacheKey { get; private set; }
+        protected string PostsCacheKey { get; }
 
-        protected string PostsFolder { get; private set; }
+        protected string PostsFolder { get; }
 
-        protected string RootFolder { get; private set; }
+        protected string RootFolder { get; }
 
         public virtual void Delete(Post post)
         {
-            var cacheKey = String.Format(PostsCacheKey, post.BlogId);
-            var postsFolder = String.Format(PostsFolder, RootFolder, post.BlogId);
+            var cacheKey = string.Format(PostsCacheKey, post.BlogId);
+            var postsFolder = string.Format(PostsFolder, RootFolder, post.BlogId);
 
             string file = Path.Combine(postsFolder, post.PostId + "." + FileExtension);
 
@@ -52,12 +51,12 @@ namespace Naif.Blog.Services
         {
             var cacheKey = String.Format(PostsCacheKey, blogId);
 
-            IEnumerable<Post> posts;
+            IList<Post> posts;
 
             if (!MemoryCache.TryGetValue(cacheKey, out posts))
             {
                 // fetch the value from the source
-                posts = GetPosts(blogId);
+                posts = GetPosts(blogId).ToList();
 
                 // store in the cache
                 MemoryCache.Set(cacheKey,
@@ -124,8 +123,8 @@ namespace Naif.Blog.Services
 
         public void Save(Post post)
         {
-            var cacheKey = String.Format(PostsCacheKey, post.BlogId);
-            var postsFolder = String.Format(PostsFolder, RootFolder, post.BlogId);
+            var cacheKey = string.Format(PostsCacheKey, post.BlogId);
+            var postsFolder = string.Format(PostsFolder, RootFolder, post.BlogId);
 
             string file = Path.Combine(postsFolder, post.PostId + "." + FileExtension);
             post.LastModified = DateTime.UtcNow;
@@ -134,14 +133,9 @@ namespace Naif.Blog.Services
 
             MemoryCache.Remove(cacheKey);
 
-            if (!File.Exists(file)) // New post
-            {
-                Logger.LogInformation($"New Post - {post.PostId} created.");
-            }
-            else
-            {
-                Logger.LogInformation($"Post - {post.PostId} updated.");
-            }
+            Logger.LogInformation(!File.Exists(file)
+                ? $"New Post - {post.PostId} created."
+                : $"Post - {post.PostId} updated.");
 
             Logger.LogInformation($"{cacheKey} cleared.");
         }

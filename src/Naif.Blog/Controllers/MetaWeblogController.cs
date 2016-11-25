@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Framework;
 using Naif.Blog.Models;
 using Naif.Blog.Services;
 using Naif.Blog.XmlRpc;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Naif.Blog.Controllers

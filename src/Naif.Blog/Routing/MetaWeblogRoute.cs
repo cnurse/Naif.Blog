@@ -20,7 +20,7 @@ namespace Naif.Blog.Routing
                   constraints, dataTokens, inlineConstraintResolver)
         { }
 
-        public async override Task RouteAsync(RouteContext context)
+        public override async Task RouteAsync(RouteContext context)
         {
             if (context.HttpContext.Request.Body != null 
                     && context.HttpContext.Request.ContentLength != null 

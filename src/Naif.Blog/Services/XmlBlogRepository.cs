@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using Naif.Blog.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using System.IO;
 using System.Xml.Linq;
-using System.Linq;
 using Microsoft.AspNetCore.Hosting;
-using Naif.Blog.Framework;
 
 namespace Naif.Blog.Services
 {
@@ -21,13 +20,13 @@ namespace Naif.Blog.Services
             Logger = loggerFactory.CreateLogger<XmlBlogRepository>();
         }
 
-        public override string FileExtension { get { return "xml"; }}
+        public override string FileExtension => "xml";
 
         protected override Post GetPost(string file, string blogId)
         {
             XElement doc = XElement.Load(file);
 
-            Post post = new Post()
+            var post = new Post()
             {
                 PostId = Path.GetFileNameWithoutExtension(file),
                 BlogId = blogId,
@@ -38,7 +37,7 @@ namespace Naif.Blog.Services
                 Keywords = ReadValue(doc, "tags"),
                 Slug = ReadValue(doc, "slug").ToLowerInvariant(),
                 PubDate = DateTime.Parse(ReadValue(doc, "pubDate")),
-                LastModified = DateTime.Parse(ReadValue(doc, "lastModified", DateTime.Now.ToString())),
+                LastModified = DateTime.Parse(ReadValue(doc, "lastModified", DateTime.Now.ToString(CultureInfo.InvariantCulture))),
                 IsPublished = bool.Parse(ReadValue(doc, "ispublished", "true")),
             };
 

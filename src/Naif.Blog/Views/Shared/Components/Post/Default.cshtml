@@ -9,14 +9,14 @@
             Category:
             @foreach (var category in Model.Categories)
             {
-                <span>@Html.ActionLink(category, "ViewCategory", "Blog", new { category = category })</span>
+                <span>@Html.ActionLink(category, "ViewCategory", "Blog", new { category })</span>
             }
         </div>
         <div>
             Tags:
             @foreach (var tag in Model.Tags)
             {
-                <span>@Html.ActionLink(tag, "ViewTag", "Blog", new { tag = tag })</span>
+                <span>@Html.ActionLink(tag, "ViewTag", "Blog", new { tag })</span>
             }
         </div>
         <div>Last Modified: @Model.LastModified.ToString("MMM d yyyy")</div>

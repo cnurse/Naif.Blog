@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Razor;
-using Naif.Blog.Models;
-using Microsoft.Extensions.Options;
 
 namespace Naif.Blog.Framework
 {
@@ -10,12 +8,11 @@ namespace Naif.Blog.Framework
     {
         public IEnumerable<string> ExpandViewLocations(ViewLocationExpanderContext context, IEnumerable<string> viewLocations)
         {
-            var themeLocations = viewLocations.ToList();
+            var enumerable = viewLocations as string[] ?? viewLocations.ToArray();
+            var themeLocations = enumerable.ToList();
             if (context.Values.ContainsKey("theme"))
             {
-                themeLocations.InsertRange(0, viewLocations.Select(f => {
-                        return f.Replace("/Views/", "/Views/" + context.Values["theme"] + "/");
-                    }));
+                themeLocations.InsertRange(0, enumerable.Select(f => f.Replace("/Views/", "/Views/" + context.Values["theme"] + "/")));
             }
             return themeLocations;
         }
@@ -25,7 +22,7 @@ namespace Naif.Blog.Framework
             var appContext = context.ActionContext.HttpContext.RequestServices
                         .GetService(typeof(IApplicationContext)) as IApplicationContext;
 
-            if (!string.IsNullOrEmpty(appContext.CurrentBlog.Theme))
+            if (appContext != null && !string.IsNullOrEmpty(appContext.CurrentBlog.Theme))
             {
                 context.Values["theme"] = appContext.CurrentBlog.Theme;
             }
