@@ -1,6 +1,6 @@
 ﻿[
   {
-    "Id": "Blog1",
+    "Id": "blog1",
     "Url": "localhost:56288",
     "Title": "Naif.Blog",
     "ByLine": "A simple ASP.NET Blog Application",
@@ -8,7 +8,7 @@
     "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
   },
   {
-    "Id": "Blog2",
+    "Id": "blog2",
     "Url": "localhost:56289",
     "Title": "Naif.Blog 2",
     "ByLine": "A simple ASP.NET Blog Application",
@@ -16,7 +16,7 @@
     "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
   },
   {
-    "Id": "Blog3",
+    "Id": "blog3",
     "Url": "localhost:56287",
     "Title": "Kestrel Blog",
     "ByLine": "A simple ASP.NET Blog Application hosted on Kestrel",

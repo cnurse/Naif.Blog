@@ -18,7 +18,7 @@ namespace Naif.Blog.Services
         {
             MemoryCache = memoryCache;
             PostsCacheKey = "{0}_posts";
-            PostsFolder = "{0}\\posts\\{1}";
+            PostsFolder = Path.Combine("{0}", "posts", "{1}");
             _filesFolder = "/posts/{1}/files/";
             RootFolder = env.WebRootPath;
         }
