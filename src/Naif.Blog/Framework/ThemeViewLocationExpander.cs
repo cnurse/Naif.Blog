@@ -12,7 +12,7 @@ namespace Naif.Blog.Framework
             var themeLocations = enumerable.ToList();
             if (context.Values.ContainsKey("theme"))
             {
-                themeLocations.InsertRange(0, enumerable.Select(f => f.Replace("/Views/", "/Views/" + context.Values["theme"] + "/")));
+                themeLocations.InsertRange(0, enumerable.Select(f => f.Replace("/Views/", "/Views/Themes/" + context.Values["theme"] + "/")));
             }
             return themeLocations;
         }

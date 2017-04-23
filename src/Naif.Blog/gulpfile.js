@@ -5,12 +5,12 @@ var del = require("del");
 
 var paths = {
     scripts: "./scripts/",
-    cssSource: "./content/*.css",
-    imageSource: "./images/*.*",
-    imageTarget: "./wwwroot/images/",
+    cssSource: "./views/themes/**/*.css",
+    cssTarget: "./wwwroot/themes/",
+    imageSource: ["./views/themes/**/*.gif","./views/themes/**/*.jpg", "./views/themes/**/*.png"],
+    imageTarget: "./wwwroot/themes/",
     libSource: "./node_modules/",
     libTarget: "./wwwroot/lib/",
-    cssTarget: "./wwwroot/css/",
     appTarget: "./wwwroot/app/"
 }
 
@@ -19,6 +19,10 @@ var libs = [
 
 gulp.task('build:bootstrap', function () {
     return gulp.src(paths.libSource + "bootstrap/dist/**/*.*").pipe(gulp.dest(paths.libTarget + "bootstrap/"));
+});
+
+gulp.task('build:jquery', function () {
+    return gulp.src(paths.libSource + "jquery/dist/**/*.*").pipe(gulp.dest(paths.libTarget + "jquery/"));
 });
 
 gulp.task('build:jqcloud', function () {

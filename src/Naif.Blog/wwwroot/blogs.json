@@ -15,13 +15,4 @@
     "Theme": "",
     "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
   },
-  {
-    "Id": "blog3",
-    "Url": "localhost:56287",
-    "Title": "Kestrel Blog",
-    "ByLine": "A simple ASP.NET Blog Application hosted on Kestrel",
-    "Theme": "",
-    "Disclaimer": "The opinions expressed herein are my own personal opinions and do not represent my employer's view in anyway."
-  }
-
 ] 

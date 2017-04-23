@@ -45,6 +45,11 @@ namespace Naif.Blog.Services
             return post;
         }
 
+        protected override IEnumerable<Post> GetPosts(string file, string blogId)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override void SavePost(Post post, string file)
         {
             XDocument doc = new XDocument(

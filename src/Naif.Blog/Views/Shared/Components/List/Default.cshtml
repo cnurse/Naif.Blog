@@ -4,11 +4,10 @@
 @model IEnumerable<Post>
 
 @{
-    foreach (var post in Model)
-    {
-        <section>
-			@await Component.InvokeAsync(typeof(ExcerptViewComponent), 
-											new { post = post })
+	foreach (var post in Model)
+	{
+		<section>
+			@await Component.InvokeAsync(typeof(ExcerptViewComponent), new { post = post })
 		</section>
 	}
 }

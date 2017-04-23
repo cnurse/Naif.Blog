@@ -1,4 +1,5 @@
-﻿using Naif.Blog.Models;
+﻿using System.Collections.Generic;
+using Naif.Blog.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.AspNetCore.Hosting;
@@ -26,10 +27,21 @@ namespace Naif.Blog.Services
             using (StreamReader r = File.OpenText(file))
             {
                 string json = r.ReadToEnd();
-                post = JsonConvert.DeserializeObject<Post>(json);
+                post =  JsonConvert.DeserializeObject<Post>(json);
                 post.BlogId = blogId;
             }
             return post;
+        }
+
+        protected override IEnumerable<Post> GetPosts(string file, string blogId)
+        {
+            List<Post> list;
+            using (StreamReader r = File.OpenText(file))
+            {
+                string json = r.ReadToEnd();
+                list =  JsonConvert.DeserializeObject<List<Post>>(json);
+            }
+            return list;
         }
 
         protected override void SavePost(Post post, string file)

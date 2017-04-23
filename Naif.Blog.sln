@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EAB2E6A5-C2B7-46E3-9783-80694A3D3B48}"
 	ProjectSection(SolutionItems) = preProject
@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Naif.Blog", "src\Naif.Blog\Naif.Blog.xproj", "{947FB84A-0AA3-4879-83C7-46F872EBCEEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Naif.Blog", "src\Naif.Blog\Naif.Blog.csproj", "{947FB84A-0AA3-4879-83C7-46F872EBCEEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

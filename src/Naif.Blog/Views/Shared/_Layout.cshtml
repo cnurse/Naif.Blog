@@ -6,76 +6,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@Model.Title</title>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
-        <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.css" />
-        <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.js"></script>
-        <script type="text/javascript" src="~/lib/jqcloud/jqcloud.js"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
-        <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.min.css" />
-        <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/lib/jqcloud/jqcloud.min.js"></script>
-    </environment>
-    <link rel="stylesheet" href="~/css/theme.css" />
-    <link href="~/wlwmanifest.xml" rel="wlwmanifest" type="application/wlwmanifest+xml">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>@Model.Title</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <environment names="Development">
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.css"/>
+    <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="~/lib/jqcloud/jqcloud.js"></script>
+  </environment>
+  <environment names="Staging,Production">
+    <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
+    <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.min.css"/>
+    <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/lib/jqcloud/jqcloud.min.js"></script>
+  </environment>
+    <link rel="stylesheet" href="~/themes/default/default.css" />
+  <link href="~/wlwmanifest.xml" rel="wlwmanifest" type="application/wlwmanifest+xml">
 </head>
 <body>
-    <div class="navbar navbar-inverse">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-controller="Blog" asp-action="Index" class="navbar-brand">@Model.Title</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-controller="Blog" asp-action="Index">Home</a></li>
-                </ul>
-            </div>
-        </div>
+<div class="navbar navbar-inverse">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a asp-controller="Blog" asp-action="Index" class="navbar-brand">@Model.Title</a>
     </div>
-    <div class="container body-content">
-        <div class="row">
-            <div class="col-md-12">
-                <h1>@Model.Title<br/>
-                <small>@Model.ByLine</small>
-                </h1>
-            </div>
-        </div>
-        <div class="row">
-            <div id="mainPane" class="col-md-8">
-                @RenderBody()
-            </div>
-            <div id="sidePane" class="col-md-4">
-                @await Component.InvokeAsync(typeof(DisclaimerViewComponent))
-                @await Component.InvokeAsync(typeof(CategoryListViewComponent))
-                @await Component.InvokeAsync(typeof(TagCloudViewComponent))
-            </div>
-        </div>
-        <hr />
-        <footer>
-            @await Component.InvokeAsync(typeof(CopyrightViewComponent))
-        </footer>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+          <a asp-controller="Blog" asp-action="Index">Home</a>
+        </li>
+      </ul>
     </div>
-
-    <environment names="Development">
-    </environment>
-    <environment names="Staging,Production">
-
-    </environment>
-
-    @RenderSection("scripts", required: false)
+  </div>
+</div>
+<div class="container body-content">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>
+        @Model.Title<br/>
+        <small>@Model.ByLine</small>
+      </h1>
+    </div>
+  </div>
+  <div class="row">
+    <div id="mainPane" class="col-md-8">
+      @RenderBody()
+    </div>
+    <div id="sidePane" class="col-md-4">
+      @await Component.InvokeAsync(typeof(DisclaimerViewComponent))
+      @await Component.InvokeAsync(typeof(CategoryListViewComponent))
+      @await Component.InvokeAsync(typeof(TagCloudViewComponent))
+    </div>
+  </div>
+  <hr/>
+  <footer>
+    @await Component.InvokeAsync(typeof(CopyrightViewComponent))
+  </footer>
+</div>
 </body>
 </html>

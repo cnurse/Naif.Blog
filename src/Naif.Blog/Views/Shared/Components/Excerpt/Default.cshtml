@@ -7,7 +7,7 @@
         <h3>@Html.ActionLink(Model.Title, "ViewPost", "Blog", new { slug = Model.Slug })</h3>
     </header>
     <section>
-        @Model.Excerpt
+        @Html.Raw(Model.Excerpt)
     </section>
     <div class="info">
         <div class="date">

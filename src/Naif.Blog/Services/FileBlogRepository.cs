@@ -96,19 +96,31 @@ namespace Naif.Blog.Services
 
             List<Post> list = new List<Post>();
 
-            // Can this be done in parallel to speed it up?
-            foreach (string file in Directory.EnumerateFiles(postsFolder, "*." + FileExtension, SearchOption.TopDirectoryOnly))
+            //First check for an archive file
+            string archiveFile = Path.Combine(postsFolder, "archivePosts." + FileExtension);
+            if (File.Exists(archiveFile))
             {
-                list.Add(GetPost(file, blogId));
+                list = GetPosts(archiveFile, blogId).ToList();
+            }
+            else
+            {
+                list = new List<Post>();
+                // Can this be done in parallel to speed it up?
+                foreach (string file in Directory.EnumerateFiles(postsFolder, "*." + FileExtension, SearchOption.TopDirectoryOnly))
+                {
+                    list.Add(GetPost(file, blogId));
+                }
             }
 
             if (list.Count > 0)
             {
-                list.Sort((p1, p2) => p2.PubDate.CompareTo(p1.PubDate));
+                list = list.OrderByDescending(p => p.PubDate).ToList();
             }
 
             return list;
         }
+
+        protected abstract IEnumerable<Post> GetPosts(string file, string blogId);
 
         public Dictionary<string, int> GetTags(string blogId)
         {
