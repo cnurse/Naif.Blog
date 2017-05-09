@@ -41,7 +41,7 @@ gulp.task('build:libs', function () {
     return gulp.src(libs).pipe(gulp.dest(paths.libTarget));
 });
 
-gulp.task("build", ["build:bootstrap", "build:jqcloud", "build:css", "build:images", "build:libs"]);
+gulp.task("build", ["build:bootstrap", "build:jquery", "build:jqcloud", "build:css", "build:images", "build:libs"]);
 
 
 gulp.task("clean", function() {

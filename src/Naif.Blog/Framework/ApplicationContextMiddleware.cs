@@ -39,7 +39,14 @@ namespace Naif.Blog.Framework
         public async Task Invoke(HttpContext context, IApplicationContext appContext)
         {
             appContext.Blogs = GetBlogs();
-            appContext.CurrentBlog = appContext.Blogs.SingleOrDefault(b => b.Url == context.Request.Host.Value);
+            if (context.Request.IsLocal())
+            {
+                appContext.CurrentBlog = appContext.Blogs.SingleOrDefault(b => b.LocalUrl == context.Request.Host.Value);
+            }
+            else
+            {
+                appContext.CurrentBlog = appContext.Blogs.SingleOrDefault(b => b.Url == context.Request.Host.Value);
+            }
             await _next.Invoke(context);
         }
 

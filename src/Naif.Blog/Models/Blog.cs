@@ -10,6 +10,8 @@ namespace Naif.Blog.Models
 
         public string Id { get; set; }
 
+        public string LocalUrl { get; set; }
+
         public Post Post { get; set; }
 
         public IEnumerable<Post> Posts { get; set; }

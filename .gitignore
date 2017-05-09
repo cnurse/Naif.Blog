@@ -241,3 +241,8 @@ _Pvt_Extensions
 /src/Naif.Blog/wwwroot/lib
 /src/Naif.Blog/wwwroot/posts
 /src/Naif.Blog/wwwroot/themes
+/src/Naif.Blog/Views/Themes
+!/src/Naif.Blog/Views/Themes/Default
+!/src/Naif.Blog/Views/Themes/Theme1
+!/src/Naif.Blog/Views/Themes/Theme2
+src/Naif.Blog/wwwroot/blogs.json

@@ -1,0 +1,50 @@
+﻿@using Naif.Blog.Models;
+@using Naif.Blog.ViewComponents;
+
+@model Naif.Blog.Framework.IPagedList<Post>
+
+@{
+    string actionName = ViewData["ActionName"] as string;
+    string actionParameter = ViewData["Parameter"] as string;
+    string actionValue = ViewData["Value"] as string;
+
+    var routeValues = new Dictionary<string, object> {[actionParameter] = actionValue};
+}
+@{
+    foreach (var post in Model)
+    {
+		<section>
+			@await Component.InvokeAsync(typeof(ExcerptViewComponent), new { post = post })
+		</section>
+	}
+}
+    
+<footer>
+    <ul class="pager">
+        @{
+            if (Model.HasPreviousPage)
+            {
+                routeValues["page"] = Model.PageIndex - 1;
+                <li class="left">@Html.ActionLink("Previous", actionName, "Blog", routeValues)</li>
+            }
+            for (int i = 1; i < Model.PageCount + 1; i++)
+            {
+                if (i  == Model.PageIndex + 1)
+                {
+                    <li>@i.ToString()</li>
+                }
+                else
+                {
+                    routeValues["page"] = i -1;
+                    <li>@Html.ActionLink(i.ToString(), actionName, "Blog", routeValues)</li>
+                }
+            }
+            if (Model.HasNextPage)
+            {
+                routeValues["page"] = Model.PageIndex + 1;
+                <li class="right">@Html.ActionLink("Next", actionName, "Blog", routeValues)</li>
+            }
+        }
+    </ul>
+</footer>
+

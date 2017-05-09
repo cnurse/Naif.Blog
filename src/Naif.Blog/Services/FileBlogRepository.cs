@@ -18,7 +18,7 @@ namespace Naif.Blog.Services
             MemoryCache = memoryCache;
             PostsCacheKey = "{0}_posts";
             PostsFolder = Path.Combine("{0}", "posts", "{1}");
-            _filesFolder = "/posts/{1}/files/";
+            _filesFolder = "/posts/{0}/files/";
             RootFolder = env.WebRootPath;
         }
 
@@ -101,6 +101,10 @@ namespace Naif.Blog.Services
             if (File.Exists(archiveFile))
             {
                 list = GetPosts(archiveFile, blogId).ToList();
+                foreach (var post in list )
+                {
+                    Save(post);
+                }
             }
             else
             {
