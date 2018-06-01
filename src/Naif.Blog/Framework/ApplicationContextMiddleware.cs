@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Naif.Blog.Framework
 {
     /// <summary>
-    /// The ApplicationContextMiddleware component processes the request to built the ApplicationContext object used
+    /// The ApplicationContextMiddleware component processes the request to build the ApplicationContext object used
     /// for the duration of the request.  
     /// The IApplicationContext object is passed in by Dependency Injection with a "scoped" lifetime, ensuring that a new object
     /// is created for each request.
@@ -36,7 +36,7 @@ namespace Naif.Blog.Framework
             _blogsFile = env.WebRootPath + "/blogs.json";
         }
 
-        public async Task Invoke(HttpContext context, IApplicationContext appContext)
+        public async Task InvokeAsync(HttpContext context, IApplicationContext appContext)
         {
             appContext.Blogs = GetBlogs();
             if (context.Request.IsLocal())

@@ -1,6 +1,7 @@
 ﻿[
   {
     "Id": "blog1",
+    "LocalUrl": "localhost:56288",
     "Url": "localhost:56288",
     "Title": "Naif.Blog",
     "ByLine": "A simple ASP.NET Blog Application",
@@ -9,6 +10,7 @@
   },
   {
     "Id": "blog2",
+    "LocalUrl": "localhost:56289",
     "Url": "localhost:56289",
     "Title": "Naif.Blog 2",
     "ByLine": "A simple ASP.NET Blog Application",

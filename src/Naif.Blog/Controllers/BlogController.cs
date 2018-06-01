@@ -20,6 +20,7 @@ namespace Naif.Blog.Controllers
             ViewData["Value"] = String.Empty;
             ViewData["Page"] = page ?? 0;
 
+            // ReSharper disable once Mvc.ViewNotResolved
             return View("Index", Blog);
         }
 
@@ -32,13 +33,15 @@ namespace Naif.Blog.Controllers
             ViewData["Value"] = category;
             ViewData["Page"] = page ?? 0;
 
+            // ReSharper disable once Mvc.ViewNotResolved
             return View("Index", Blog);
         }
 
         public IActionResult ViewPost(string slug)
         {
             Blog.Post = BlogRepository.GetAll(Blog.Id).Single(p => p.Slug == slug);
-            return View(Blog);
+            // ReSharper disable once Mvc.ViewNotResolved
+            return View("ViewPost", Blog);
         }
 
         public IActionResult ViewTag(string tag, int? page)
@@ -50,6 +53,7 @@ namespace Naif.Blog.Controllers
             ViewData["Value"] = tag;
             ViewData["Page"] = page ?? 0;
 
+            // ReSharper disable once Mvc.ViewNotResolved
             return View("Index", Blog);
         }
     }

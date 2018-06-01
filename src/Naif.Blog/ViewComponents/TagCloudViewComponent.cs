@@ -14,6 +14,7 @@ namespace Naif.Blog.ViewComponents
 
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
+			// ReSharper disable once Mvc.ViewComponentViewNotResolved
 			return View(BlogRepository.GetTags(Blog.Id));
 		}
 	}

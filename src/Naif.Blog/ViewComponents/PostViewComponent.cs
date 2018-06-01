@@ -8,6 +8,7 @@ namespace Naif.Blog.ViewComponents
     {
         public async Task<IViewComponentResult> InvokeAsync(Post post)
         {
+            // ReSharper disable once Mvc.ViewComponentViewNotResolved
             return View(post);
         }
     }
