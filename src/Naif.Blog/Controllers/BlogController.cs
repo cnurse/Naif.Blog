@@ -39,7 +39,12 @@ namespace Naif.Blog.Controllers
 
         public IActionResult ViewPost(string slug)
         {
-            Blog.Post = BlogRepository.GetAll(Blog.Id).Single(p => p.Slug == slug);
+            Blog.Post = BlogRepository.GetAll(Blog.Id).SingleOrDefault(p => p.Slug == slug);
+
+            if (Blog.Post == null)
+            {
+                return new NotFoundResult();
+            }
             // ReSharper disable once Mvc.ViewNotResolved
             return View("ViewPost", Blog);
         }

@@ -238,6 +238,10 @@ _Pvt_Extensions
 # FAKE - F# Make
 .fake/
 
+# VSCode
+**/*.vscode
+**/*.iml
+
 /src/Naif.Blog/wwwroot/lib
 /src/Naif.Blog/wwwroot/posts
 /src/Naif.Blog/wwwroot/themes
@@ -246,3 +250,4 @@ _Pvt_Extensions
 !/src/Naif.Blog/Views/Themes/Theme1
 !/src/Naif.Blog/Views/Themes/Theme2
 src/Naif.Blog/wwwroot/blogs.json
+src/Naif.Blog/appsettings.Development.json

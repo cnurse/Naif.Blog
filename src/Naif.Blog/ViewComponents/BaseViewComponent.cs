@@ -15,7 +15,5 @@ namespace Naif.Blog.ViewComponents
         public Models.Blog Blog { get; }
 
         protected IBlogRepository BlogRepository { get; set; }
-
-
     }
 }

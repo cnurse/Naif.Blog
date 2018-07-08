@@ -44,6 +44,13 @@
                     <a asp-controller="Blog" asp-action="Index">Home</a>
                 </li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li><a asp-controller="Account" asp-action="Profile">@User.Identity.Name</a></li>
+                    <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                }
+            </ul>
         </div>
     </div>
 </div>

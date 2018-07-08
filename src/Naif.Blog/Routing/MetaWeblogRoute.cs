@@ -10,12 +10,12 @@ namespace Naif.Blog.Routing
     public class MetaWeblogRoute : Route
     {
         public MetaWeblogRoute(IRouter target,
-                             string routeName,
-                             string routeTemplate,
-							 RouteValueDictionary defaults,
-                             IDictionary<string, object> constraints,
-							 RouteValueDictionary dataTokens,
-                             IInlineConstraintResolver inlineConstraintResolver)
+                            string routeName,
+                            string routeTemplate,
+                            RouteValueDictionary defaults,
+                            IDictionary<string, object> constraints,
+                            RouteValueDictionary dataTokens,
+                            IInlineConstraintResolver inlineConstraintResolver)
             : base(target, routeName, routeTemplate, defaults, 
                   constraints, dataTokens, inlineConstraintResolver)
         { }

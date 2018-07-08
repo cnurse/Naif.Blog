@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Naif.Blog.Controllers
 {
-    public class BaseController : Controller
+    public abstract class BaseController : Controller
     {
         protected BaseController(IBlogRepository blogRepository, IApplicationContext appContext)
         {

@@ -15,7 +15,7 @@ namespace Naif.Blog.Models
         public Post Post { get; set; }
 
         public IEnumerable<Post> Posts { get; set; }
-
+        
         public string Theme { get; set; }
 
         public string Title { get; set; }
