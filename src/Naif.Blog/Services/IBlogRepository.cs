@@ -5,15 +5,19 @@ namespace Naif.Blog.Services
 {
     public interface IBlogRepository
     {
-        void Delete(Post post);
+        void DeletePost(Post post);
 
-        IEnumerable<Post> GetAll(string blogId);
+        IEnumerable<Page> GetAllPages(string blogId);
+
+        IEnumerable<Post> GetAllPosts(string blogId);
 
         Dictionary<string, int> GetCategories(string blogId);
 
         Dictionary<string, int> GetTags(string blogId);
 
-        void Save(Post post);
+        void SavePage(Page page);
+        
+        void SavePost(Post post);
 
         string SaveMedia(string blogid, MediaObject media);
     }

@@ -6,6 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="wwwroot\pages\blog1" />
+    <Folder Include="wwwroot\pages\blog2" />
+    <Folder Include="wwwroot\posts\blog2" />
     <Folder Include="wwwroot\themes\" />
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,19 @@ namespace Naif.Blog.Services
             Logger = loggerFactory.CreateLogger<JsonBlogRepository>();
         }
 
-        public override string FileExtension { get { return "json"; } }
+        protected override string FileExtension { get { return "json"; } }
+
+        protected override Page GetPage(string file, string blogId)
+        {
+            Page page;
+            using (StreamReader r = File.OpenText(file))
+            {
+                string json = r.ReadToEnd();
+                page =  JsonConvert.DeserializeObject<Page>(json);
+                page.BlogId = blogId;
+            }
+            return page;
+        }
 
         protected override Post GetPost(string file, string blogId)
         {
@@ -33,15 +45,13 @@ namespace Naif.Blog.Services
             return post;
         }
 
-        protected override IEnumerable<Post> GetPosts(string file, string blogId)
+        protected override void SavePage(Page page, string file)
         {
-            List<Post> list;
-            using (StreamReader r = File.OpenText(file))
+            using (StreamWriter w = File.CreateText(file))
             {
-                string json = r.ReadToEnd();
-                list =  JsonConvert.DeserializeObject<List<Post>>(json);
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(w, page);
             }
-            return list;
         }
 
         protected override void SavePost(Post post, string file)

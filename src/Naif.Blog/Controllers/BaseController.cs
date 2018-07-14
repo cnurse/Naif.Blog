@@ -27,7 +27,7 @@ namespace Naif.Blog.Controllers
             title = RemoveDiacritics(title);
             title = RemoveReservedUrlCharacters(title);
 
-            if (BlogRepository.GetAll(Blog.Id).Any(p => string.Equals(p.Slug, title, StringComparison.OrdinalIgnoreCase)))
+            if (BlogRepository.GetAllPosts(Blog.Id).Any(p => string.Equals(p.Slug, title, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new Exception("Slug is already in use");
             }

@@ -11,55 +11,80 @@ namespace Naif.Blog.Services
 {
     public abstract class FileBlogRepository : IBlogRepository
     {
-        readonly string _filesFolder;
+        private readonly string _filesFolder;
+        private readonly IMemoryCache _memoryCache;
+        private readonly string _pagesCacheKey;
+        private readonly string _pagesFolder;
+        private readonly string _postsCacheKey;
+        private readonly string _postsFolder;
+        private readonly string _rootFolder;
 
         protected FileBlogRepository(IHostingEnvironment env, IMemoryCache memoryCache)
         {
-            MemoryCache = memoryCache;
-            PostsCacheKey = "{0}_posts";
-            PostsFolder = Path.Combine("{0}", "posts", "{1}");
+            _memoryCache = memoryCache;
+            _pagesCacheKey = "{0}_pages";
+            _pagesFolder = Path.Combine("{0}", "pages", "{1}");
+            _postsCacheKey = "{0}_posts";
+            _postsFolder = Path.Combine("{0}", "posts", "{1}");
             _filesFolder = "/posts/{0}/files/";
-            RootFolder = env.WebRootPath;
+            _rootFolder = env.WebRootPath;
         }
 
-        public abstract string FileExtension { get; }
+        protected abstract string FileExtension { get; }
 
         protected ILogger Logger {get; set;}
 
-        protected IMemoryCache MemoryCache { get; set; }
-
-        protected string PostsCacheKey { get; }
-
-        protected string PostsFolder { get; }
-
-        protected string RootFolder { get; }
-
-        public virtual void Delete(Post post)
+        public virtual void DeletePost(Post post)
         {
-            var cacheKey = string.Format(PostsCacheKey, post.BlogId);
-            var postsFolder = string.Format(PostsFolder, RootFolder, post.BlogId);
+            var cacheKey = string.Format(_postsCacheKey, post.BlogId);
+            var postsFolder = string.Format(_postsFolder, _rootFolder, post.BlogId);
 
             string file = Path.Combine(postsFolder, post.PostId + "." + FileExtension);
 
             File.Delete(file);
 
-            MemoryCache.Remove(cacheKey);
+            _memoryCache.Remove(cacheKey);
             Logger.LogInformation($"{cacheKey} cleared.");
         }
 
-        public IEnumerable<Post> GetAll(string blogId)
+        public IEnumerable<Page> GetAllPages(string blogId)
         {
-            var cacheKey = String.Format(PostsCacheKey, blogId);
+            var cacheKey = String.Format(_pagesCacheKey, blogId);
+
+            IList<Page> pages;
+
+            if (!_memoryCache.TryGetValue(cacheKey, out pages))
+            {
+                // fetch the value from the source
+                pages = GetPages(blogId).ToList();
+
+                // store in the cache
+                _memoryCache.Set(cacheKey,
+                    pages,
+                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)));
+                Logger.LogInformation($"{cacheKey} updated from source.");
+            }
+            else
+            {
+                Logger.LogInformation($"{cacheKey} retrieved from cache.");
+            }
+
+            return pages;
+        }
+
+        public IEnumerable<Post> GetAllPosts(string blogId)
+        {
+            var cacheKey = String.Format(_postsCacheKey, blogId);
 
             IList<Post> posts;
 
-            if (!MemoryCache.TryGetValue(cacheKey, out posts))
+            if (!_memoryCache.TryGetValue(cacheKey, out posts))
             {
                 // fetch the value from the source
                 posts = GetPosts(blogId).ToList();
 
                 // store in the cache
-                MemoryCache.Set(cacheKey,
+                _memoryCache.Set(cacheKey,
                     posts,
                     new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)));
                 Logger.LogInformation($"{cacheKey} updated from source.");
@@ -74,7 +99,7 @@ namespace Naif.Blog.Services
 
         public Dictionary<string, int> GetCategories(string blogId)
         {
-            var result = GetAll(blogId).Where(p => ((p.IsPublished && p.PubDate <= DateTime.UtcNow)))
+            var result = GetAllPosts(blogId).Where(p => ((p.IsPublished && p.PubDate <= DateTime.UtcNow)))
                 .SelectMany(post => post.Categories)
                 .GroupBy(category => category, (category, items) => new { Category = category, Count = items.Count() })
                 .OrderBy(x => x.Category)
@@ -83,37 +108,23 @@ namespace Naif.Blog.Services
             return result;
         }
 
-        protected abstract Post GetPost(string file, string blogId);
+        protected abstract Page GetPage(string file, string blogId);
 
-        private IEnumerable<Post> GetPosts(string blogId)
+        private IEnumerable<Page> GetPages(string blogId)
         {
-            var postsFolder = String.Format(PostsFolder, RootFolder, blogId);
+            var pagesFolder = String.Format(_pagesFolder, _rootFolder, blogId);
 
-            if (!Directory.Exists(postsFolder))
+            if (!Directory.Exists(pagesFolder))
             {
-                Directory.CreateDirectory(postsFolder);
+                Directory.CreateDirectory(pagesFolder);
             }
 
-            List<Post> list = new List<Post>();
+            List<Page> list = new List<Page>();
 
-            //First check for an archive file
-            string archiveFile = Path.Combine(postsFolder, "archivePosts." + FileExtension);
-            if (File.Exists(archiveFile))
+            // Can this be done in parallel to speed it up?
+            foreach (string file in Directory.EnumerateFiles(pagesFolder, "*." + FileExtension, SearchOption.TopDirectoryOnly))
             {
-                list = GetPosts(archiveFile, blogId).ToList();
-                foreach (var post in list )
-                {
-                    Save(post);
-                }
-            }
-            else
-            {
-                list = new List<Post>();
-                // Can this be done in parallel to speed it up?
-                foreach (string file in Directory.EnumerateFiles(postsFolder, "*." + FileExtension, SearchOption.TopDirectoryOnly))
-                {
-                    list.Add(GetPost(file, blogId));
-                }
+                list.Add(GetPage(file, blogId));
             }
 
             if (list.Count > 0)
@@ -124,11 +135,36 @@ namespace Naif.Blog.Services
             return list;
         }
 
-        protected abstract IEnumerable<Post> GetPosts(string file, string blogId);
+        protected abstract Post GetPost(string file, string blogId);
+
+        private IEnumerable<Post> GetPosts(string blogId)
+        {
+            var postsFolder = String.Format(_postsFolder, _rootFolder, blogId);
+
+            if (!Directory.Exists(postsFolder))
+            {
+                Directory.CreateDirectory(postsFolder);
+            }
+
+            List<Post> list = new List<Post>();
+
+            // Can this be done in parallel to speed it up?
+            foreach (string file in Directory.EnumerateFiles(postsFolder, "*." + FileExtension, SearchOption.TopDirectoryOnly))
+            {
+                list.Add(GetPost(file, blogId));
+            }
+
+            if (list.Count > 0)
+            {
+                list = list.OrderByDescending(p => p.PubDate).ToList();
+            }
+
+            return list;
+        }
 
         public Dictionary<string, int> GetTags(string blogId)
         {
-            var result = GetAll(blogId).Where(p => ((p.IsPublished && p.PubDate <= DateTime.UtcNow)))
+            var result = GetAllPosts(blogId).Where(p => ((p.IsPublished && p.PubDate <= DateTime.UtcNow)))
                 .SelectMany(post => post.Tags)
                 .GroupBy(tag => tag, (tag, items) => new { Tag = tag, Count = items.Count() })
                 .OrderBy(x => x.Tag)
@@ -137,17 +173,36 @@ namespace Naif.Blog.Services
             return result;
         }
 
-        public void Save(Post post)
+        public void SavePage(Page page)
         {
-            var cacheKey = string.Format(PostsCacheKey, post.BlogId);
-            var postsFolder = string.Format(PostsFolder, RootFolder, post.BlogId);
+            var cacheKey = string.Format(_pagesCacheKey, page.BlogId);
+            var pagesFolder = string.Format(_pagesFolder, _rootFolder, page.BlogId);
+
+            string file = Path.Combine(pagesFolder, page.PageId + "." + FileExtension);
+            page.LastModified = DateTime.UtcNow;
+
+            SavePage(page, file);
+
+            _memoryCache.Remove(cacheKey);
+
+            Logger.LogInformation(!File.Exists(file)
+                ? $"New Page - {page.PageId} created."
+                : $"Page - {page.PageId} updated.");
+
+            Logger.LogInformation($"{cacheKey} cleared.");
+        }
+
+        public void SavePost(Post post)
+        {
+            var cacheKey = string.Format(_postsCacheKey, post.BlogId);
+            var postsFolder = string.Format(_postsFolder, _rootFolder, post.BlogId);
 
             string file = Path.Combine(postsFolder, post.PostId + "." + FileExtension);
             post.LastModified = DateTime.UtcNow;
 
             SavePost(post, file);
 
-            MemoryCache.Remove(cacheKey);
+            _memoryCache.Remove(cacheKey);
 
             Logger.LogInformation(!File.Exists(file)
                 ? $"New Post - {post.PostId} created."
@@ -155,6 +210,8 @@ namespace Naif.Blog.Services
 
             Logger.LogInformation($"{cacheKey} cleared.");
         }
+
+        protected abstract void SavePage(Page page, string file);
 
         protected abstract void SavePost(Post post, string file);
 
@@ -182,7 +239,7 @@ namespace Naif.Blog.Services
 
             relative += extension;
 
-            string file = RootFolder + relative.Replace("/", "\\");
+            string file = _rootFolder + relative.Replace("/", "\\");
 
             File.WriteAllBytes(file, media.Bits);
 

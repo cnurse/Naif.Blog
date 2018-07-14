@@ -20,7 +20,27 @@ namespace Naif.Blog.Services
             Logger = loggerFactory.CreateLogger<XmlBlogRepository>();
         }
 
-        public override string FileExtension => "xml";
+        protected override string FileExtension => "xml";
+
+        protected override Page GetPage(string file, string blogId)
+        {
+            XElement doc = XElement.Load(file);
+
+            var page = new Page()
+            {
+                PageId = Path.GetFileNameWithoutExtension(file),
+                ParentPageId = ReadValue(doc, "parentPageId"),
+                BlogId = blogId,
+                Title = ReadValue(doc, "title"),
+                Content = ReadValue(doc, "content"),
+                Keywords = ReadValue(doc, "tags"),
+                Slug = ReadValue(doc, "slug").ToLowerInvariant(),
+                PubDate = DateTime.Parse(ReadValue(doc, "pubDate")),
+                LastModified = DateTime.Parse(ReadValue(doc, "lastModified", DateTime.Now.ToString(CultureInfo.InvariantCulture))),
+                IsPublished = bool.Parse(ReadValue(doc, "ispublished", "true")),
+            };
+            return page;
+        }
 
         protected override Post GetPost(string file, string blogId)
         {
@@ -45,9 +65,24 @@ namespace Naif.Blog.Services
             return post;
         }
 
-        protected override IEnumerable<Post> GetPosts(string file, string blogId)
+        protected override void SavePage(Page page, string file)
         {
-            throw new NotImplementedException();
+            XDocument doc = new XDocument(
+                new XElement("post",
+                    new XElement("title", page.Title),
+                    new XElement("slug", page.Slug),
+                    new XElement("pubDate", page.PubDate.ToString("yyyy-MM-dd HH:mm:ss")),
+                    new XElement("lastModified", page.LastModified.ToString("yyyy-MM-dd HH:mm:ss")),
+                    new XElement("content", page.Content),
+                    new XElement("categories", string.Empty),
+                    new XElement("tags", page.Keywords),
+                    new XElement("ispublished", page.IsPublished)
+                ));
+
+            using(var stream = new FileStream(file, FileMode.Create))
+            {
+                doc.Save(stream);
+            }
         }
 
         protected override void SavePost(Post post, string file)

@@ -243,6 +243,7 @@ _Pvt_Extensions
 **/*.iml
 
 /src/Naif.Blog/wwwroot/lib
+/src/Naif.Blog/wwwroot/pages
 /src/Naif.Blog/wwwroot/posts
 /src/Naif.Blog/wwwroot/themes
 /src/Naif.Blog/Views/Themes

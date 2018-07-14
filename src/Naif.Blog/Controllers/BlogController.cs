@@ -13,7 +13,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult Index(int? page)
         {
-            Blog.Posts = BlogRepository.GetAll(Blog.Id);
+            Blog.Posts = BlogRepository.GetAllPosts(Blog.Id);
 
             ViewData["ActionName"] = "Index";
             ViewData["Parameter"] = String.Empty;
@@ -26,7 +26,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult ViewCategory(string category, int? page)
         {
-            Blog.Posts = BlogRepository.GetAll(Blog.Id).Where(p => p.Categories.Contains(category));
+            Blog.Posts = BlogRepository.GetAllPosts(Blog.Id).Where(p => p.Categories.Contains(category));
 
             ViewData["ActionName"] = "ViewCategory";
             ViewData["Parameter"] = "category";
@@ -39,7 +39,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult ViewPost(string slug)
         {
-            Blog.Post = BlogRepository.GetAll(Blog.Id).SingleOrDefault(p => p.Slug == slug);
+            Blog.Post = BlogRepository.GetAllPosts(Blog.Id).SingleOrDefault(p => p.Slug == slug);
 
             if (Blog.Post == null)
             {
@@ -51,7 +51,7 @@ namespace Naif.Blog.Controllers
 
         public IActionResult ViewTag(string tag, int? page)
         {
-            Blog.Posts = BlogRepository.GetAll(Blog.Id).Where(p => p.Keywords.Contains(tag));
+            Blog.Posts = BlogRepository.GetAllPosts(Blog.Id).Where(p => p.Keywords.Contains(tag));
 
             ViewData["ActionName"] = "ViewTag";
             ViewData["Parameter"] = "tag";
