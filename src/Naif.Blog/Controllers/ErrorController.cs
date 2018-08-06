@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Framework;
 using Naif.Blog.Services;
+using Naif.Blog.ViewModels;
 
 namespace Naif.Blog.Controllers
 {
@@ -20,15 +21,15 @@ namespace Naif.Blog.Controllers
         {
             if (errCode == "404")
             {
-                return View("404", Blog);
+                return View("404", new BlogViewModel { Blog = Blog});
             }
 
             if (errCode == "500")
             {
-                return View("500", Blog);
+                return View("500", new BlogViewModel { Blog = Blog});
             }
 
-            return View("Unknown", Blog);
+            return View("Unknown", new BlogViewModel { Blog = Blog});
         }
     }
 }

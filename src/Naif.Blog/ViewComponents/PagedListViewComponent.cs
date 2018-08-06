@@ -1,17 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Framework;
 using Naif.Blog.Models;
+using Naif.Blog.ViewModels;
 
 namespace Naif.Blog.ViewComponents
 {
     public class PagedListViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(IEnumerable<Post> list, int pageCount)
+        public async Task<IViewComponentResult> InvokeAsync(IEnumerable<PostBase> list, int pageCount, int pageIndex, bool isPage, bool? isTable)
         {
+            var posts = list.InPagesOf(pageCount).GetPage(pageIndex);
+            
+            string actionName = ViewContext.ActionDescriptor.RouteValues["action"];
+            string controller = ViewContext.ActionDescriptor.RouteValues["controller"];
+            string actionParameter = actionName == "Index" 
+                ? String.Empty
+                : actionName == "ViewCategory" 
+                    ? "category"
+                    : "tag";
+            string actionValue = actionName == "Index"
+                ? String.Empty
+                : ViewContext.RouteData.Values[actionParameter] as string;
+
+            var viewModel = new PagedListViewModel
+            {
+                IsPage = isPage,
+                Pager = new Pager
+                {
+                    Action = actionName,
+                    Controller = controller,
+                    CssClass = "pager",
+                    HasNextPage = posts.HasNextPage,
+                    HasPreviousPage = posts.HasPreviousPage,
+                    NextCssClass = "right",
+                    NextText = "Next",
+                    PageCount = posts.PageCount,
+                    PageIndex = posts.PageIndex,
+                    PreviousCssClass = "left",
+                    PreviousText = "Previous",
+                    RouteValues = new Dictionary<string, object> {[actionParameter] = actionValue}
+                },
+                Posts = posts
+            };
+
             // ReSharper disable once Mvc.ViewComponentViewNotResolved
-            return View(list.InPagesOf(pageCount).GetPage((int)ViewData["Page"]));
+            return isTable.HasValue && isTable.Value ? View("Table", viewModel) : View(viewModel);
         }
     }
 }

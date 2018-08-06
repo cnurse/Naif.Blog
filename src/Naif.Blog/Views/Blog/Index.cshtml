@@ -1,9 +1,0 @@
-﻿@using Naif.Blog.Models;
-@using Naif.Blog.ViewComponents;
-
-@model Blog
-
-<section>
-    <h2>Articles</h2>
-    @await Component.InvokeAsync(typeof(ListViewComponent), new { list = Model.Posts })
-</section>

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Naif.Blog.Services;
 
 namespace Naif.Blog.Framework
 {
@@ -20,25 +21,18 @@ namespace Naif.Blog.Framework
     public class ApplicationContextMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger _logger;
-        private readonly IMemoryCache _memoryCache;
-        private string _blogsCacheKey = "blogs";
-        private readonly string _blogsFile;
+        private readonly IBlogRepository _blogRepository;
 
         public ApplicationContextMiddleware(RequestDelegate next, 
-                                    IHostingEnvironment env, 
-                                    IMemoryCache memoryCache,
-                                    ILoggerFactory loggerFactory)
+                                    IBlogRepository blogRepository)
         {
-            _memoryCache = memoryCache;
-            _logger = loggerFactory.CreateLogger<ApplicationContextMiddleware>();
             _next = next;
-            _blogsFile = env.WebRootPath + "/blogs.json";
+            _blogRepository = blogRepository;
         }
 
         public async Task InvokeAsync(HttpContext context, IApplicationContext appContext)
         {
-            appContext.Blogs = GetBlogs();
+            appContext.Blogs = _blogRepository.GetBlogs();
             if (context.Request.IsLocal())
             {
                 appContext.CurrentBlog = appContext.Blogs.SingleOrDefault(b => b.LocalUrl == context.Request.Host.Value);
@@ -48,33 +42,6 @@ namespace Naif.Blog.Framework
                 appContext.CurrentBlog = appContext.Blogs.SingleOrDefault(b => b.Url == context.Request.Host.Value);
             }
             await _next.Invoke(context);
-        }
-
-        private IEnumerable<Models.Blog> GetBlogs()
-        {
-            IList<Models.Blog> blogs;
-
-            if (!_memoryCache.TryGetValue(_blogsCacheKey, out blogs))
-            {
-                // fetch the value from the source
-                using (StreamReader reader = File.OpenText(_blogsFile))
-                {
-                    var json = reader.ReadToEnd();
-                    blogs = JsonConvert.DeserializeObject<IList<Models.Blog>>(json);
-                }
-
-                // store in the cache
-                _memoryCache.Set(_blogsCacheKey,
-                    blogs,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)));
-                _logger.LogInformation($"{_blogsCacheKey} updated from source.");
-            }
-            else
-            {
-                _logger.LogInformation($"{_blogsCacheKey} retrieved from cache.");
-            }
-
-            return blogs;
         }
     }
 }

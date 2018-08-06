@@ -1,30 +1,66 @@
 ﻿@using Naif.Blog.Models
+@using Naif.Blog.ViewModels
 
-@model Blog
+@model BlogViewModel
+
+@{
+    string controllerName = ViewContext.ActionDescriptor.RouteValues["controller"];
+
+    var menu = new Menu
+    {
+        CssClass = "nav nav-pills nav-stacked",
+        IsActiveCssClass = "active",
+        Items = new List<MenuItem>
+        {
+            new MenuItem
+            {
+                Controller = "Admin",
+                Action = "",
+                IsActive = (controllerName == "Admin"),
+                Text = "Home"
+            },
+            new MenuItem
+            {
+                Controller = "Page",
+                Action = "List",
+                IsActive = (controllerName == "Page"),
+                Text = "Pages"
+            },
+            new MenuItem
+            {
+                Controller = "Post",
+                Action = "List",
+                IsActive = (controllerName == "Post"),
+                Text = "Posts"
+            }
+        }
+    };
+}
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@Model.Title</title>
+    <title>@Model.Blog.Title</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
-        <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.css"/>
         <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.js"></script>
-        <script type="text/javascript" src="~/lib/jqcloud/jqcloud.js"></script>
+        <script type="text/javascript" src="~/lib/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
-        <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.min.css"/>
         <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/lib/jqcloud/jqcloud.min.js"></script>
+        <script type="text/javascript" src="~/lib/bootstrap-tagsinput/bootstrap-tagsinput.min.js"></script>
     </environment>
+    <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/bootstrap-tagsinput.css"/>
+    <script type="text/javascript" src="~/lib/bootstrap-multiselect/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap-multiselect/css/bootstrap-multiselect.css" type="text/css"/>
     <link rel="stylesheet" href="~/themes/default/default.css"/>
-    <link href="~/wlwmanifest.xml" rel="wlwmanifest" type="application/wlwmanifest+xml">
+    <script type="text/javascript" src="~/lib/ckeditor/ckeditor.js"></script>
 </head>
 <body>
 <div class="navbar navbar-inverse">
@@ -36,19 +72,19 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a asp-controller="Blog" asp-action="Index" class="navbar-brand">@Model.Title</a>
+            <a asp-controller="Post" asp-action="Index" class="navbar-brand">@Model.Blog.Title</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a asp-controller="Blog" asp-action="Index">Home</a>
+                    <a asp-controller="Post" asp-action="Index">Home</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li><a asp-controller="Account" asp-action="Profile">Hello @User.Identity.Name!</a></li>
-                    <li><a  asp-controller="Account" asp-action="Logout">Logout</a></li>
+                    <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
                 }
                 else
                 {
@@ -62,24 +98,23 @@
     <div class="row">
         <div class="col-md-12">
             <h1>
-                @Model.Title<br/>
-                <small>@Model.ByLine</small>
+                @Model.Blog.Title<br/>
+                <small>@Model.Blog.ByLine</small>
             </h1>
         </div>
     </div>
     <div class="row">
-        <div id="mainPane" class="col-md-8">
-            @RenderBody()
+        <div id="leftPane" class="col-md-3">
+            <h2>Menu</h2>
+            <vc:menu menu="@menu"></vc:menu>
         </div>
-        <div id="sidePane" class="col-md-4">
-            @await Component.InvokeAsync("Disclaimer", new {})
-            @await Component.InvokeAsync("CategoryList", new {})
-            @await Component.InvokeAsync("TagCloud", new {})
+        <div id="mainPane" class="col-md-9">
+            @RenderBody()
         </div>
     </div>
     <hr/>
     <footer>
-        @await Component.InvokeAsync("Copyright", new {})
+        <vc:copyright></vc:copyright>
     </footer>
 </div>
 </body>

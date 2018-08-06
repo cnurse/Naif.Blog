@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Mvc.Rendering
+@using Naif.Blog.Models;
+
+@model Pager
+
+<footer>
+    <ul class="@Model.CssClass">
+        @{
+            if (Model.HasPreviousPage)
+            {
+                Model.RouteValues["page"] = Model.PageIndex - 1;
+                <li class="@Model.PreviousCssClass">@Html.ActionLink(@Model.PreviousText, @Model.Action, @Model.Controller, @Model.RouteValues)</li>
+            }
+            for (int i = 1; i < Model.PageCount + 1; i++)
+            {
+                if (i  == Model.PageIndex + 1)
+                {
+                    <li>@i.ToString()</li>
+                }
+                else
+                {
+                    Model.RouteValues["page"] = i -1;
+                    <li>@Html.ActionLink(i.ToString(), @Model.Action, @Model.Controller, @Model.RouteValues)</li>
+                }
+            }
+            if (Model.HasNextPage)
+            {
+                Model.RouteValues["page"] = Model.PageIndex + 1;
+                <li class="@Model.NextCssClass">@Html.ActionLink(@Model.NextText, @Model.Action, @Model.Controller, @Model.RouteValues)</li>
+            }
+        }
+    </ul>
+</footer>
+

@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.Rendering
-@model Dictionary<string, int>
+﻿@model Dictionary<string, int>
 
 <section>
     <h2>Categories</h2>
@@ -10,7 +9,7 @@
                 foreach(var category in Model)
                 {
                     var linkText = $"{category.Key} - ({category.Value})";
-                    <li><h4>@Html.ActionLink(linkText, "ViewCategory", "Blog", new { category = category.Key })</h4></li>
+                    <li><h4><a asp-controller="Post" asp-action="ViewCategory" asp-route-category="@category.Key">@linkText</a></h4></li>
                 }
             }
         </ul>

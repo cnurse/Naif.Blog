@@ -1,0 +1,19 @@
+﻿@using Naif.Blog.Models
+
+@model Menu
+
+<ul class="@Model.CssClass">
+	@{
+		foreach (var menuItem in Model.Items)
+		{
+			if (menuItem.IsActive)
+			{
+				<li class="@Model.IsActiveCssClass"><a href="#">@menuItem.Text</a></li>
+			}
+			else
+			{
+				<li><a asp-controller="@menuItem.Controller" asp-action="@menuItem.Action">@menuItem.Text</a></li>
+			}
+		}
+	}
+</ul>

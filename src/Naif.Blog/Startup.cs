@@ -35,7 +35,9 @@ namespace Naif.Blog
 	    public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
-            services.AddTransient<IBlogRepository, JsonBlogRepository>();
+	        services.AddTransient<IBlogRepository, FileBlogRepository>();
+            services.AddTransient<IPageRepository, JsonPageRepository>();
+	        services.AddTransient<IPostRepository, JsonPostRepository>();
             services.AddScoped<IApplicationContext, ApplicationContext>();
 	        
 	        services.Configure<XmlRpcSecurityOptions>(Configuration.GetSection("XmlRpcSecurity"));
@@ -48,6 +50,11 @@ namespace Naif.Blog
             {
                 options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
             });
+	        
+	        services.AddAuthorization(options =>
+	        {
+		        options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("admin"));
+	        });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,10 +82,18 @@ namespace Naif.Blog
             app.UseMvc(routes =>
             {
 				routes.MapRoute(
+						name: "post",
+						template: "post/{action}",
+						defaults: new
+						{
+							controller = "Post",
+							action = "Index"
+						})
+					.MapRoute(
 						name: "blogPost",
 						template: "post/{*slug}",
 						defaults: new {
-							controller = "Blog",
+							controller = "Post",
 							action = "ViewPost"
 						})
 					.MapRoute(
@@ -86,7 +101,7 @@ namespace Naif.Blog
 						template: "category/{*category}",
 						defaults: new
 						{
-							controller = "Blog",
+							controller = "Post",
 							action = "ViewCategory"
 						})
 					.MapRoute(
@@ -94,36 +109,14 @@ namespace Naif.Blog
 						template: "tag/{*tag}",
 						defaults: new
 						{
-							controller = "Blog",
+							controller = "Post",
 							action = "ViewTag"
 						})
 					.MapRoute(
 						name: "default",
-						template: "{controller=Blog}/{action=Index}/{id?}")
+						template: "{controller=Post}/{action=Index}/{id?}")
                     .MapMetaWeblogRoute();
             });
         }
-
-		// Entry point for the application.
-		public static void Main(string[] args)
-		{
-            var contentRoot = Directory.GetCurrentDirectory();
-
-            var config = new ConfigurationBuilder()
-                .SetBasePath(contentRoot)
-                .AddJsonFile("hosting.json", optional: true)
-                .Build();
-
-			var host = new WebHostBuilder()
-				.UseKestrel()
-                .UseConfiguration(config)
-                .UseContentRoot(contentRoot)
-                .UseWebRoot(Path.Combine(contentRoot, "wwwroot"))
-                .UseIISIntegration()
-				.UseStartup<Startup>()
-				.Build();
-
-			host.Run();
-		}
     }
 }

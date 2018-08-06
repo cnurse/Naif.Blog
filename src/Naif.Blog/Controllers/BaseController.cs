@@ -17,7 +17,7 @@ namespace Naif.Blog.Controllers
             BlogRepository = blogRepository;
         }
 
-        public Models.Blog Blog { get; }
+        protected Models.Blog Blog { get; }
 
         protected IBlogRepository BlogRepository { get; set; }
 
@@ -27,10 +27,10 @@ namespace Naif.Blog.Controllers
             title = RemoveDiacritics(title);
             title = RemoveReservedUrlCharacters(title);
 
-            if (BlogRepository.GetAllPosts(Blog.Id).Any(p => string.Equals(p.Slug, title, StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new Exception("Slug is already in use");
-            }
+//            if (BlogRepository.GetAllPosts(Blog.Id).Any(p => string.Equals(p.Slug, title, StringComparison.OrdinalIgnoreCase)))
+//            {
+//                throw new Exception("Slug is already in use");
+//            }
 
             return title.ToLowerInvariant();
         }

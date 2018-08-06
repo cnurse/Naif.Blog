@@ -15,16 +15,24 @@ namespace Naif.Blog.Controllers
     public class MetaWeblogController : BaseController
     {
         private readonly XmlRpcSecurityOptions _securityOptions;
+        private readonly IPageRepository _pageRepository;
+        private readonly IPostRepository _postRepository;
 
-        public MetaWeblogController(IBlogRepository blogRepository, IApplicationContext appContext, IOptions<XmlRpcSecurityOptions> optionsAccessor) 
+        public MetaWeblogController(IBlogRepository blogRepository, 
+            IApplicationContext appContext, 
+            IPageRepository pageRepository, 
+            IPostRepository postRepository, 
+            IOptions<XmlRpcSecurityOptions> optionsAccessor) 
             :base(blogRepository, appContext)
         {
             _securityOptions = optionsAccessor.Value;
+            _pageRepository = pageRepository;
+            _postRepository = postRepository;
         }
 
-        public IActionResult GetUsersBlogs(string key, string username, string password)
+        public IActionResult GetUsersBlogs(string key, string userName, string password)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
 
                 var blogs = new[]
@@ -40,29 +48,27 @@ namespace Naif.Blog.Controllers
             });
         }
         
-        
-
-        public IActionResult DeletePost(string key, string postid, string username, string password, bool publish)
+        public IActionResult DeletePost(string key, string postId, string userName, string password, bool publish)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
-                Post post = BlogRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postid);
+                Post post = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
 
                 if (post != null)
                 {
                     post.BlogId = Blog.Id;
-                    BlogRepository.DeletePost(post);
+                    _postRepository.DeletePost(post);
                 }
 
                 return new XmlRpcResult(post != null);
             });
         }
 
-        public IActionResult EditPost(string postid, string username, string password, Post post, bool publish)
+        public IActionResult EditPost(string postId, string userName, string password, Post post, bool publish)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
-                Post match = BlogRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postid);
+                Post match = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
 
                 if (match != null)
                 {
@@ -79,18 +85,18 @@ namespace Naif.Blog.Controllers
                     match.Keywords = post.Keywords;
                     match.IsPublished = publish;
 
-                    BlogRepository.SavePost(match);
+                    _postRepository.SavePost(match);
                 }
 
                 return new XmlRpcResult(match != null);
             });
         }
 
-        public IActionResult GetPost(string postid, string username, string password)
+        public IActionResult GetPost(string postId, string userName, string password)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
-                var post = BlogRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postid);
+                var post = _postRepository.GetAllPosts(Blog.Id).FirstOrDefault(p => p.PostId == postId);
 
                 var info = new
                 {
@@ -100,7 +106,7 @@ namespace Naif.Blog.Controllers
                     wp_slug = post.Slug,
                     categories = post.Categories.ToArray(),
                     mt_keywords = post.Keywords,
-                    postid = post.PostId,
+                    postId = post.PostId,
                     mt_excerpt = post.Excerpt
                 };
 
@@ -108,13 +114,13 @@ namespace Naif.Blog.Controllers
             });
         }
 
-        public IActionResult GetRecentPosts(string blogid, string username, string password, int numberOfPosts)
+        public IActionResult GetRecentPosts(string blogId, string userName, string password, int numberOfPosts)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
                 List<object> list = new List<object>();
 
-                foreach (var post in BlogRepository.GetAllPosts(blogid).Take(numberOfPosts))
+                foreach (var post in _postRepository.GetAllPosts(blogId).Take(numberOfPosts))
                 {
                     var info = new
                     {
@@ -122,7 +128,7 @@ namespace Naif.Blog.Controllers
                         title = post.Title,
                         dateCreated = post.PubDate,
                         wp_slug = post.Slug,
-                        postid = post.PostId
+                        postId = post.PostId
                     };
 
                     list.Add(info);
@@ -132,9 +138,9 @@ namespace Naif.Blog.Controllers
             });
         }
 
-        public IActionResult NewPost(string blogid, string username, string password, Post post, bool publish)
+        public IActionResult NewPost(string blogId, string userName, string password, Post post, bool publish)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
 
                 try
@@ -154,20 +160,49 @@ namespace Naif.Blog.Controllers
                 }
 
                 post.IsPublished = publish;
-                post.BlogId = blogid;
-                BlogRepository.SavePost(post);
+                post.BlogId = blogId;
+                _postRepository.SavePost(post);
 
                 return new XmlRpcResult(post.PostId);
             });
         }
         
-        
-        
-        public IActionResult EditPage(string pageid, string username, string password, Page page, bool publish)
+        private object CreatePage(Page page)
         {
-            return CheckSecurity(username, password, () =>
+            var info = new
             {
-                Page match = BlogRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageid);
+                description = page.Content,
+                title = page.Title,
+                dateCreated = page.PubDate,
+                wp_slug = page.Slug,
+                page_id = page.PageId,
+                wp_page_parent_id = page.ParentPageId
+            };
+
+            return info;
+        }
+        
+        public IActionResult DeletePage(string blogId,  string userName, string password, string pageId)
+        {
+            return CheckSecurity(userName, password, () =>
+            {
+                Page page = _pageRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageId);
+
+                if (page != null)
+                {
+                    page.BlogId = Blog.Id;
+                    _pageRepository.DeletePage(page);
+                }
+
+                return new XmlRpcResult(page != null);
+            });
+        }
+        
+        public IActionResult EditPage(string blogId, string pageId, string userName, string password, Page page, bool publish)
+        {
+            return CheckSecurity(userName, password, () =>
+            {
+                Page match = _pageRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageId);
 
                 if (match != null)
                 {
@@ -182,47 +217,37 @@ namespace Naif.Blog.Controllers
                     match.Keywords = page.Keywords;
                     match.IsPublished = publish;
 
-                    BlogRepository.SavePage(match);
+                    _pageRepository.SavePage(match);
                 }
 
                 return new XmlRpcResult(match != null);
             });
         }
 
-        public IActionResult GetPage(string blogid, string pageid, string username, string password)
+        public IActionResult GetPage(string blogId, string pageId, string userName, string password)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
-                var page = BlogRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageid);
+                var page = _pageRepository.GetAllPages(Blog.Id).FirstOrDefault(p => p.PageId == pageId);
 
-                var info = new
-                {
-                    description = page.Content,
-                    title = page.Title,
-                    dateCreated = page.PubDate,
-                    wp_slug = page.Slug,
-                    pageid = page.PageId,
-                    wp_page_parent_id = page.ParentPageId
-                };
-
-                return new XmlRpcResult(info);
+                return new XmlRpcResult(CreatePage(page));
             });
         }
 
-        public IActionResult GetPageList(string blogid, string username, string password)
+        public IActionResult GetPageList(string blogId, string userName, string password)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
                 List<object> list = new List<object>();
 
-                foreach (var page in BlogRepository.GetAllPages(blogid))
+                foreach (var page in _pageRepository.GetAllPages(blogId))
                 {
                     var info = new
                     {
                         page_title = page.Title,
                         dateCreated = page.PubDate,
                         page_id = page.PageId,
-                        page_parent_id = page.ParentPageId
+                        wp_page_parent_id = page.ParentPageId
                     };
 
                     list.Add(info);
@@ -232,34 +257,24 @@ namespace Naif.Blog.Controllers
             });
         }
 
-        public IActionResult GetPages(string blogid, string username, string password, int numberOfPosts)
+        public IActionResult GetPages(string blogId, string userName, string password, int numberOfPosts)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
                 List<object> list = new List<object>();
 
-                foreach (var page in BlogRepository.GetAllPages(blogid).Take(numberOfPosts))
+                foreach (var page in _pageRepository.GetAllPages(blogId).Take(numberOfPosts))
                 {
-                    var info = new
-                    {
-                        description = page.Content,
-                        title = page.Title,
-                        dateCreated = page.PubDate,
-                        wp_slug = page.Slug,
-                        page_id = page.PageId,
-                        page_parent_id = page.ParentPageId
-                    };
-
-                    list.Add(info);
+                    list.Add(CreatePage(page));
                 }
 
                 return new XmlRpcResult(list.ToArray());
             });
         }
 
-        public IActionResult NewPage(string blogid, string username, string password, Page page, bool publish)
+        public IActionResult NewPage(string blogId, string userName, string password, Page page, bool publish)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
 
                 try
@@ -279,22 +294,20 @@ namespace Naif.Blog.Controllers
                 }
 
                 page.IsPublished = publish;
-                page.BlogId = blogid;
-                BlogRepository.SavePage(page);
+                page.BlogId = blogId;
+                _pageRepository.SavePage(page);
 
                 return new XmlRpcResult(page.PageId);
             });
         }
 
         
-        
-        
-        public IActionResult GetCategories(string blogid, string username, string password)
+        public IActionResult GetCategories(string blogId, string userName, string password)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
 
-                var categories = BlogRepository.GetCategories(blogid);
+                var categories = BlogRepository.GetCategories(blogId);
 
                 var list = new List<object>();
 
@@ -307,20 +320,20 @@ namespace Naif.Blog.Controllers
             });
         }
 
-        public IActionResult NewMediaObject(string blogid, string username, string password, MediaObject media)
+        public IActionResult NewMediaObject(string blogId, string userName, string password, MediaObject media)
         {
-            return CheckSecurity(username, password, () =>
+            return CheckSecurity(userName, password, () =>
             {
 
-                string relative = BlogRepository.SaveMedia(blogid, media);
+                string relative = BlogRepository.SaveMedia(blogId, media);
 
                 return new XmlRpcResult(new {url = $"{Request.Scheme}://{Request.Host}{relative}"});
             });
         }
 
-        public IActionResult CheckSecurity(string username, string password, Func<IActionResult> secureFunc)
+        public IActionResult CheckSecurity(string userName, string password, Func<IActionResult> secureFunc)
         {
-            if (_securityOptions.Username == username && _securityOptions.Password == password)
+            if (_securityOptions.Username == userName && _securityOptions.Password == password)
             {
                 return secureFunc();
             }

@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc
-@model System.Collections.Generic.Dictionary<string, int>
+@model Dictionary<string, int>
 
 <section>
   <h2>Tags</h2>
@@ -14,7 +14,7 @@
         @{
             foreach (var tag in Model)
             {
-                var link = Url.Action("ViewTag", "Blog", new { tag = tag.Key });
+                var link = Url.Action("ViewTag", "Post", new { tag = tag.Key });
                 var element = $"{{text: '{tag.Key}', weight: {tag.Value}, link: '{link}'}},";
                 <text>@Html.Raw(element)</text>
             }

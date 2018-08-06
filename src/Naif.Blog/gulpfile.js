@@ -21,6 +21,18 @@ gulp.task('build:bootstrap', function () {
     return gulp.src(paths.libSource + "bootstrap/dist/**/*.*").pipe(gulp.dest(paths.libTarget + "bootstrap/"));
 });
 
+gulp.task('build:bootstrap-tags', function () {
+    return gulp.src(paths.libSource + "bootstrap-tagsinput/dist/**/*.*").pipe(gulp.dest(paths.libTarget + "bootstrap-tagsinput/"));
+});
+
+gulp.task('build:bootstrap-multiselect', function () {
+    return gulp.src(paths.libSource + "bootstrap-multiselect/dist/**/*.*").pipe(gulp.dest(paths.libTarget + "bootstrap-multiselect/"));
+});
+
+gulp.task('build:ckeditor', function () {
+    return gulp.src(paths.libSource + "ckeditor/**/*.*").pipe(gulp.dest(paths.libTarget + "ckeditor/"));
+});
+
 gulp.task('build:jquery', function () {
     return gulp.src(paths.libSource + "jquery/dist/**/*.*").pipe(gulp.dest(paths.libTarget + "jquery/"));
 });
@@ -41,7 +53,7 @@ gulp.task('build:libs', function () {
     return gulp.src(libs).pipe(gulp.dest(paths.libTarget));
 });
 
-gulp.task("build", ["build:bootstrap", "build:jquery", "build:jqcloud", "build:css", "build:images", "build:libs"]);
+gulp.task("build", ["build:bootstrap", "build:bootstrap-multiselect", "build:bootstrap-tags", "build:ckeditor", "build:jquery", "build:jqcloud", "build:css", "build:images", "build:libs"]);
 
 
 gulp.task("clean", function() {

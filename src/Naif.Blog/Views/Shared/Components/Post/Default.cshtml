@@ -1,23 +1,40 @@
-﻿@using Microsoft.AspNetCore.Mvc.Rendering
-@using Naif.Blog.Models;
+﻿@inject IAuthorizationService AuthorizationService
 
+@using Microsoft.AspNetCore.Authorization
+@using Naif.Blog.Models
 @model Post
+
+@{
+    var returnUrl = $"/post/{Model.Slug}";
+}
 
 <article class="post">
     <header>
-        <h2>@Model.Title</h2>
+        <div class="row">
+            <div class="col-md-10">
+                <h2>@Model.Title</h2>
+            </div>
+            <div class="col-md-2">
+                @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminRole")).Succeeded)
+                {
+                    <a asp-controller="Post" asp-action="EditPost" asp-route-id="@Model.PostId" asp-route-returnUrl="@returnUrl">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                }
+            </div>
+        </div>
         <div>
             Category:
             @foreach (var category in Model.Categories)
             {
-                <span>@Html.ActionLink(category, "ViewCategory", "Blog", new { category })</span>
+                <span><a asp-controller="Post" asp-action="ViewCategory" asp-route-category="@category">@category</a></span>
             }
         </div>
         <div>
             Tags:
             @foreach (var tag in Model.Tags)
             {
-                <span>@Html.ActionLink(tag, "ViewTag", "Blog", new { tag })</span>
+                <span><a asp-controller="Post" asp-action="ViewTag" asp-route-tag="@tag">@tag</a></span>
             }
         </div>
         <div>Last Modified: @Model.LastModified.ToString("MMM d yyyy")</div>

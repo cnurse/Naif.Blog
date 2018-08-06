@@ -1,21 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Naif.Blog.Models
 {
     public class Blog
     {
+        [Display(Name = "By-Line")]
         public string ByLine { get; set; }
 
         public string Disclaimer { get; set; }
 
         public string Id { get; set; }
 
+        [Display(Name = "Local Url")]
         public string LocalUrl { get; set; }
 
-        public Post Post { get; set; }
-
-        public IEnumerable<Post> Posts { get; set; }
-        
         public string Theme { get; set; }
 
         public string Title { get; set; }

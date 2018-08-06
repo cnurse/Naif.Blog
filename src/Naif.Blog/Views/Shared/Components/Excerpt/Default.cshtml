@@ -1,20 +1,43 @@
-﻿@using Microsoft.AspNetCore.Mvc.Rendering
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
 @using Naif.Blog.Models;
 
-@model Post
+@model PostBase
+
+@{
+    var post = Model as Post;
+    var returnUrl = $"/post/index";
+    if (ViewBag.PageIndex > 0)
+    {
+        returnUrl += $"/?page={ViewBag.PageIndex}";
+    }
+}
 
 <article class="excerpt">
     <header>
-        <h3>@Html.ActionLink(Model.Title, "ViewPost", "Blog", new { slug = Model.Slug })</h3>
+        <div class="row">
+            <div class="col-md-10">
+                <h3><a asp-controller="Post" asp-action="ViewPost" asp-route-slug="@post.Slug">@post.Title</a></h3>
+            </div>
+            <div class="col-md-2">
+                @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminRole")).Succeeded)
+                {
+                    <a asp-controller="Post" asp-action="EditPost" asp-route-id="@post.PostId" asp-route-returnUrl="@returnUrl">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </a>
+                }
+            </div>
+        </div>
     </header>
     <section>
-        @Html.Raw(Model.Excerpt)
+        @Html.Raw(post.Excerpt)
     </section>
     <div class="info">
         <div class="date">
-            <span class="month">@Model.PubDate.ToString("MMM")</span>
-            <span class="day">@Model.PubDate.Day</span>
-            <span class="year">@Model.PubDate.Year</span>
+            <span class="month">@post.PubDate.ToString("MMM")</span>
+            <span class="day">@post.PubDate.Day</span>
+            <span class="year">@post.PubDate.Year</span>
         </div>
         <div style="clear:both"></div>
     </div>

@@ -252,3 +252,4 @@ _Pvt_Extensions
 !/src/Naif.Blog/Views/Themes/Theme2
 src/Naif.Blog/wwwroot/blogs.json
 src/Naif.Blog/appsettings.Development.json
+src/Naif.Blog/appsettings.Azure.json

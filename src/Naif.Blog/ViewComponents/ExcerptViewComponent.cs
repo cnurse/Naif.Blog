@@ -6,7 +6,7 @@ namespace Naif.Blog.ViewComponents
 {
     public class ExcerptViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(Post post)
+        public async Task<IViewComponentResult> InvokeAsync(PostBase post)
         {
             // ReSharper disable once Mvc.ViewComponentViewNotResolved
             return View(post);

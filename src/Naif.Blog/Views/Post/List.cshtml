@@ -1,0 +1,13 @@
+﻿@using Naif.Blog.ViewComponents
+@using Naif.Blog.ViewModels;
+
+@model BlogViewModel
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<section>
+    <h2>Blog Posts</h2>
+    @await Component.InvokeAsync(typeof(PagedListViewComponent), new { list = Model.Posts, pageCount = 10, pageIndex = Model.PageIndex, isPage = false, isTable = true })
+</section>

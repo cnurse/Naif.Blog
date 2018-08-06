@@ -1,13 +1,13 @@
-﻿@using Naif.Blog.Models
+﻿@using Naif.Blog.ViewModels
 
-@model Blog
+@model BlogViewModel
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@Model.Title Theme 1</title>
+    <title>@Model.Blog.Title Theme 1</title>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <environment names="Development">
@@ -32,11 +32,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-controller="Blog" asp-action="Index" class="navbar-brand">@Model.Title</a>
+                <a asp-controller="Post" asp-action="Index" class="navbar-brand">@Model.Blog.Title</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-controller="Blog" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Post" asp-action="Index">Home</a></li>
                 </ul>
             </div>
         </div>

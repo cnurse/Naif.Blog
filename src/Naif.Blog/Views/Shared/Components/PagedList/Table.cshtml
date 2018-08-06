@@ -1,0 +1,42 @@
+﻿@using Naif.Blog.Models
+@using Naif.Blog.ViewModels;
+
+@model PagedListViewModel
+
+@{
+    var returnUrl = Model.IsPage ? "/page/list" :"/post/list";
+    if (ViewBag.PageIndex > 0)
+    {
+        returnUrl += $"/?page={Model.Pager.PageIndex}";
+    }
+    var controller = Model.IsPage ? "Page" : "Post";
+    var action = Model.IsPage ? "EditPage" : "EditPost";
+}
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Created</th>
+        <th>Published</th>
+    </tr>
+    </thead>
+    <tbody>
+    @{
+        foreach (var post in Model.Posts)
+        {
+            var id = Model.IsPage ? (post as Page).PageId : (post as Post).PostId;
+            <tr>
+                <td><a asp-controller="@controller" asp-action="@action" asp-route-id="@id" asp-route-returnUrl="@returnUrl">@post.Title</a></td>
+                <td>@string.Join(",", post.Categories)</td>
+                <td>@post.PubDate.ToShortDateString()</td>
+                <td>@post.IsPublished</td>
+            </tr>
+        }
+    }
+    </tbody>
+</table>
+
+<vc:pager pager="@Model.Pager"></vc:pager>
+
