@@ -9,6 +9,8 @@ namespace Naif.Blog.Models
 
         public string Disclaimer { get; set; }
 
+        public string GoogleAnalytics { get; set; }
+
         public string Id { get; set; }
 
         [Display(Name = "Local Url")]

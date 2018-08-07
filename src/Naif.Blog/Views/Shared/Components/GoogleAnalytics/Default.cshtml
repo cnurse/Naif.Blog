@@ -1,0 +1,22 @@
+﻿@model Naif.Blog.Models.Blog
+
+<environment names="Azure">
+    @{
+        if (!string.IsNullOrEmpty(Model.GoogleAnalytics))
+        {
+            var src = $"https://www.googletagmanager.com/gtag/js?id={Model.GoogleAnalytics}";
+
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+            <script async src="@src"></script>
+            <script>
+                window.dataLayer = window.dataLayer || [];
+
+                function gtag() { dataLayer.push(arguments); }
+
+                gtag('js', new Date());
+
+                gtag('config', '@Model.GoogleAnalytics');
+            </script>
+        }
+    }
+</environment>
