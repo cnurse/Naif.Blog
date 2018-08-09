@@ -242,6 +242,7 @@ _Pvt_Extensions
 **/*.vscode
 **/*.iml
 
+/src/Naif.Blog/Properties/launchSettings.json
 /src/Naif.Blog/wwwroot/lib
 /src/Naif.Blog/wwwroot/pages
 /src/Naif.Blog/wwwroot/posts
