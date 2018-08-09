@@ -17,7 +17,7 @@
             <div class="col-md-2">
                 @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminRole")).Succeeded)
                 {
-                    <a asp-controller="Post" asp-action="EditPost" asp-route-id="@Model.PostId" asp-route-returnUrl="@returnUrl">
+                    <a asp-controller="Post" asp-action="EditPost" asp-route-id="@Model.PostId" asp-route-returnUrl="@returnUrl" class="edit">
                         <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 }

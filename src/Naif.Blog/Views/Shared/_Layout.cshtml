@@ -5,25 +5,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@Model.Blog.Title</title>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <environment names="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css"/>
-        <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.css"/>
-        <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.js"></script>
-        <script type="text/javascript" src="~/lib/jqcloud/jqcloud.js"></script>
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
-              asp-fallback-href="~/lib/bootstrap/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"/>
-        <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.min.css"/>
-        <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="~/lib/jqcloud/jqcloud.min.js"></script>
-    </environment>
-    <link rel="stylesheet" href="~/themes/default/default.css"/>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.min.css" />
+    <link rel="stylesheet" href="~/themes/default/default.css" />
+    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/lib/jqcloud/jqcloud.min.js"></script>
     <link href="~/wlwmanifest.xml" rel="wlwmanifest" type="application/wlwmanifest+xml">
 </head>
 <body>

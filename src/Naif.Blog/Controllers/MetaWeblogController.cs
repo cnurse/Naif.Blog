@@ -106,7 +106,7 @@ namespace Naif.Blog.Controllers
                     wp_slug = post.Slug,
                     categories = post.Categories.ToArray(),
                     mt_keywords = post.Keywords,
-                    postId = post.PostId,
+                    postid = post.PostId,
                     mt_excerpt = post.Excerpt
                 };
 
@@ -128,7 +128,7 @@ namespace Naif.Blog.Controllers
                         title = post.Title,
                         dateCreated = post.PubDate,
                         wp_slug = post.Slug,
-                        postId = post.PostId
+                        postid = post.PostId
                     };
 
                     list.Add(info);

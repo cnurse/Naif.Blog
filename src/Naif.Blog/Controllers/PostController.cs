@@ -13,12 +13,15 @@ namespace Naif.Blog.Controllers
 	public class PostController : BaseController
     {
         private readonly IPostRepository _postRepository;
+        private readonly IAuthorizationService _authorizationService;
 
-        public PostController(IBlogRepository blogRepository,
+        public PostController(IAuthorizationService authorizationService,
+            IBlogRepository blogRepository,
             IApplicationContext appContext,
             IPostRepository postRepository)
             : base(blogRepository, appContext)
         {
+            _authorizationService = authorizationService;
             _postRepository = postRepository;
         }
 
@@ -93,7 +96,7 @@ namespace Naif.Blog.Controllers
             {
                 Blog = Blog,
                 PageIndex = page ?? 0,
-                Posts = _postRepository.GetAllPosts(Blog.Id).Where(p => p.Categories.Contains(category))
+                Posts = _postRepository.GetAllPosts(Blog.Id).Where(p => p.Categories.Contains(category) && p.IsPublished)
             };
 
             // ReSharper disable once Mvc.ViewNotResolved
@@ -126,7 +129,7 @@ namespace Naif.Blog.Controllers
             {
                 Blog = Blog,
                 PageIndex = page ?? 0,
-                Posts = _postRepository.GetAllPosts(Blog.Id).Where(p => p.Keywords.Contains(tag))
+                Posts = _postRepository.GetAllPosts(Blog.Id).Where(p => p.Keywords.Contains(tag) && p.IsPublished)
             };
 
             // ReSharper disable once Mvc.ViewNotResolved
@@ -135,11 +138,12 @@ namespace Naif.Blog.Controllers
         
         private IActionResult DisplayListView(int? page, string view)
         {
+            bool includeUnpublished = _authorizationService.AuthorizeAsync(User, "RequireAdminRole").Result.Succeeded;
             var blogViewModel = new BlogViewModel
             {
                 Blog = Blog,
                 PageIndex = page ?? 0,
-                Posts = _postRepository.GetAllPosts(Blog.Id)
+                Posts = _postRepository.GetAllPosts(Blog.Id).Where(p => p.IsPublished || includeUnpublished)
             };
             
             ViewBag.PageIndex = page ?? 0;
