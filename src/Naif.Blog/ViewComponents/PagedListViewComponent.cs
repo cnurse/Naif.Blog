@@ -10,7 +10,7 @@ namespace Naif.Blog.ViewComponents
 {
     public class PagedListViewComponent : ViewComponent
     {
-        public async Task<IViewComponentResult> InvokeAsync(IEnumerable<PostBase> list, int pageCount, int pageIndex, bool isPage, bool? isTable)
+        public async Task<IViewComponentResult> InvokeAsync(IEnumerable<PostBase> list, int pageCount, int pageIndex, string filter, bool isPage, bool? isTable)
         {
             var posts = list.InPagesOf(pageCount).GetPage(pageIndex);
             
@@ -32,7 +32,8 @@ namespace Naif.Blog.ViewComponents
                 {
                     Action = actionName,
                     Controller = controller,
-                    CssClass = "pager",
+                    CssClass = "pagination",
+                    Filter = filter,
                     HasNextPage = posts.HasNextPage,
                     HasPreviousPage = posts.HasPreviousPage,
                     NextCssClass = "right",

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Framework;
 using Naif.Blog.Services;
+using Naif.Blog.ViewModels;
 
 namespace Naif.Blog.Controllers
 {
@@ -20,13 +21,13 @@ namespace Naif.Blog.Controllers
         
         public IActionResult AccessDenied()
         {
-            return View("AccessDenied", Blog);
+            return View("AccessDenied", new BlogViewModel { Blog = Blog});
         }
 
         [Authorize]
         public IActionResult Profile()
         {
-            return View("Profile", Blog);
+            return View("Profile", new BlogViewModel { Blog = Blog});
         }
 
         [Authorize]

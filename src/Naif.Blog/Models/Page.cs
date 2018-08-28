@@ -18,5 +18,9 @@ namespace Naif.Blog.Models
         [XmlRpcProperty("wp_page_parent_id")]
         [Display(Name="Parent Page")]
         public string ParentPageId { get; set; }
+        
+        [Display(Name="Page Type")]
+        public PageType PageType { get; set; }
+
     }
 }

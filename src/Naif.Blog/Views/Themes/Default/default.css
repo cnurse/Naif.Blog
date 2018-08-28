@@ -1,4 +1,77 @@
 ﻿body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    color: #515151;
+    background-color: #ffffff;
+}
+
+@media (max-width: 767px) {
+    .navbar-brand {
+        font-size: 24px;
+    }
+
+    h1 {
+        font-size: 32px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    h3 {
+        font-size: 24px;
+    }
+
+    h4 {
+        font-size: 20px;
+    }
+
+    body {
+        font-size: 16px;
+    }
+
+    p {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 768px) {
+    .navbar-brand {
+        font-size: 24px;
+    }
+
+    .banner h1 {
+        font-size: 48px;
+        letter-spacing: -0.03em;
+    }
+
+    h1 {
+        font-size: 36px;
+    }
+
+    h2 {
+        font-size: 30px;
+    }
+
+    h3 {
+        font-size: 24px;
+    }
+
+    h4 {
+        font-size: 20px;
+    }
+
+    body {
+        font-size: 16px;
+    }
+
+    p {
+        font-size: 16px;
+    }
+}
+
+.body-content {
+    padding-top: 70px;
 }
 
 article {
@@ -72,4 +145,29 @@ article.post header a {
 section .jqcloud {
     height: 350px;
     width: 100%;
+}
+
+div.bootstrap-tagsinput {
+    display: block;
+}
+
+div.bootstrap-tagsinput .label{
+    display: inline;
+    padding: 0em .6em .1em;
+    font-weight: 700;
+    color: #fff;
+    border-radius: .25em;
+}
+
+div.bootstrap-tagsinput .label-info{
+    background-color: #5bc0de;
+}
+
+input.form-control.input-validation-error{
+    border-color: #dc3545;
+    box-shadow : 0px 0px 0px 0.2rem rgba(220,53,69,0.25);
+}
+
+span.invalid-feedback.field-validation-error {
+    display:block;
 }

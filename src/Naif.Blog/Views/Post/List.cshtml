@@ -1,13 +1,46 @@
-﻿@using Naif.Blog.ViewComponents
+﻿@using Microsoft.AspNetCore.Routing
+@using Naif.Blog.ViewComponents
 @using Naif.Blog.ViewModels;
 
 @model BlogViewModel
 
 @{
     Layout = "_AdminLayout";
+
+    var returnUrl = Url.Action("List", "Post", new RouteValueDictionary {{"filter", Model.Filter}, {"page", Model.PageIndex}});
 }
 
 <section>
     <h2>Blog Posts</h2>
-    @await Component.InvokeAsync(typeof(PagedListViewComponent), new { list = Model.Posts, pageCount = 10, pageIndex = Model.PageIndex, isPage = false, isTable = true })
+    <p class="lead">
+        Manage the posts on your site. You can filter the list by entering a search string in the box below and/or use the pager below the table.
+    </p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10">
+                <form asp-controller="Post" method="get">
+                    <div class="input-group mb-3">
+                        <input type="text" asp-for="Filter" class="form-control" placeholder="Enter search text and click the magnifying glass icon" aria-label="Enter search text">
+                        <div class="input-group-append">
+                            @{
+                                if (!string.IsNullOrEmpty(Model.Filter))
+                                {
+                                    <button type="submit" class="btn btn-outline-secondary" asp-action="Clear">
+                                        <i class="far fa-times-circle"></i>
+                                    </button>
+                                }
+                            }
+                            <button type="submit" class="btn btn-outline-secondary" asp-action="List">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2">
+                <a asp-controller="Post" asp-action="NewPost" asp-route-returnUrl="@returnUrl" class="btn btn-primary float-right mb-3" role="button">New Post</a>
+            </div>
+        </div>
+    </div>
+    @await Component.InvokeAsync(typeof(PagedListViewComponent), new {list = Model.Posts, pageCount = 10, pageIndex = Model.PageIndex, filter = Model.Filter, isPage = false, isTable = true})
 </section>

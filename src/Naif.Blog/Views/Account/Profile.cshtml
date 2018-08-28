@@ -1,9 +1,21 @@
-﻿@using Naif.Blog.Models;
-@using Naif.Blog.ViewComponents
+﻿@using System.Security.Claims
+@using Naif.Blog.Models
+@using Naif.Blog.ViewModels;
 
-@model Blog
+@model BlogViewModel
+
+@{
+    var user = new UserProfile
+    {
+        Name = User.Identity.Name,
+        EmailAddress = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value,
+        ProfileImage = User.Claims.FirstOrDefault(c => c.Type == "picture")?.Value
+    };
+}
 
 <section>
     <h2>User Profile</h2>
-    @await Component.InvokeAsync(typeof(UserProfileViewComponent))
+    <section nb-profile-name="@user.Name" 
+             nb-profile-email="@user.EmailAddress" 
+             nb-profile-image="@user.ProfileImage"></section>
 </section>

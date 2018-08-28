@@ -113,6 +113,20 @@ namespace Naif.Blog
 							action = "ViewTag"
 						})
 					.MapRoute(
+						name: "page",
+						template: "page/{action}",
+						defaults: new {
+							controller = "Page",
+							action = "Index"
+						})
+					.MapRoute(
+						name: "viewPage",
+						template: "page/{*slug}",
+						defaults: new {
+							controller = "Page",
+							action = "ViewPage"
+						})
+					.MapRoute(
 						name: "default",
 						template: "{controller=Post}/{action=Index}/{id?}")
                     .MapMetaWeblogRoute();

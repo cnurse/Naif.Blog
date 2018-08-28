@@ -10,6 +10,8 @@ namespace Naif.Blog.ViewModels
         
         public List<SelectListItem> Categories { get; set; }
         
+        public string Filter { get; set; }
+        
         public int PageIndex { get; set; }
         
         public Page Page { get; set; }
@@ -19,5 +21,7 @@ namespace Naif.Blog.ViewModels
         public Post Post { get; set; }
 
         public IEnumerable<Post> Posts { get; set; }
+        
+        public List<SelectListItem> Themes { get; set; }
     }
 }

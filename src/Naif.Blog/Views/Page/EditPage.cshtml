@@ -5,53 +5,69 @@
 
 @{
     Layout = "_AdminLayout";
+    var action = ViewBag.IsNew ? "CreatePage" : "SavePage";
 }
 
 
-<h2>Edit Post</h2>
+<h2>Edit page</h2>
 <form asp-controller="Page" method="post">
     <input asp-for="Page.PageId" class="form-control" type="hidden">
     <div class="form-group">
+        <label asp-for="Page.Title"></label>
+        <input asp-for="Page.Title" class="form-control" placeholder="Title">
+        <span asp-validation-for="Page.Title" class="invalid-feedback"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Page.PageType"></label>
+        <select asp-for="Page.PageType" asp-items="Html.GetEnumSelectList<PageType>()" class="form-control" id="pageType"></select>
+    </div>
+    <div class="form-group page_content">
         <label asp-for="Page.ParentPageId"></label>
         <select asp-for="Page.ParentPageId" asp-items="@Model.Pages.Where(p => p.PageId != Model.Page.PageId).Select(c => new SelectListItem {Value = c.PageId, Text = c.Title})" class="form-control">
             <option value="">--none--</option>
         </select>
     </div>
-    <div class="form-group">
-        <label asp-for="Page.Title"></label>
-        <input asp-for="Page.Title" class="form-control" placeholder="Title">
-    </div>
-    <div class="form-group">
+    <div class="form-group page_content">
         <label asp-for="Page.Content"></label>
         <textarea asp-for="Page.Content" class="form-control" placeholder="Content" rows="15" id="content-editor"></textarea>
     </div>
-    <div class="form-group">
+    <div class="form-group page_content">
         <label asp-for="Page.Excerpt"></label>
         <textarea asp-for="Page.Excerpt" class="form-control" placeholder="Content" rows="3" id="excerpt-editor"></textarea>
     </div>
     <div class="form-group">
         <label asp-for="Page.Categories"></label>
         <div>
-            <select asp-for="Page.Categories" asp-items="Model.Categories" id="categories-select"></select>
+            <select asp-for="Page.Categories" asp-items="Model.Categories" class="selectpicker"></select>
         </div>
     </div>
     <div class="form-group">
         <label asp-for="Page.Tags"></label>
         <input type="text" asp-for="Page.Keywords" data-role="tagsinput">
     </div>
-    <div class="checkbox">
-        <label>
-            <input asp-for="Page.IsPublished">Is Published?
-        </label>
+    <div class="form-group form-check">
+        <input asp-for="Page.IsPublished" class="form-check-input" type="checkbox">
+        <label asp-for="Page.IsPublished" class="form-check-label">Is Published?</label>
     </div>
     <script type="text/javascript">
         CKEDITOR.replace( 'content-editor' );
         CKEDITOR.replace( 'excerpt-editor' );
         
-        $(document).ready(function() {
-            $('#categories-select').multiselect();
-        });
+        $(document).ready(function(){
+            showHideContent();
+            $('#pageType').change(function() {
+                showHideContent();
+            });
+        }); 
+        
+        function showHideContent() {
+            if($('#pageType').val() == '1') {
+                $('.page_content').show(); 
+            } else {
+                $('.page_content').hide(); 
+            } 
+        }
     </script>
-    <button type="submit" class="btn btn-primary" asp-action="SavePage" asp-route-returnUrl="@ViewBag.ReturnUrl">Submit</button>
-    <button type="cancel" class="btn btn-default" asp-action="Cancel" asp-route-returnUrl="@ViewBag.ReturnUrl">Cancel</button>
+    <button type="submit" class="btn btn-primary" asp-action="@action" asp-route-returnUrl="@ViewBag.ReturnUrl">Submit</button>
+    <button type="cancel" class="btn btn-default" formnovalidate asp-action="Cancel" asp-route-returnUrl="@ViewBag.ReturnUrl">Cancel</button>
 </form>

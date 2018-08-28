@@ -8,11 +8,25 @@
 		{
 			if (menuItem.IsActive)
 			{
-				<li class="@Model.IsActiveCssClass"><a href="#">@menuItem.Text</a></li>
+				<li class="nav-item"><a class="nav-link @Model.IsActiveCssClass" href="#">@menuItem.Text</a></li>
 			}
 			else
 			{
-				<li><a asp-controller="@menuItem.Controller" asp-action="@menuItem.Action">@menuItem.Text</a></li>
+				string href;
+				if (string.IsNullOrEmpty(menuItem.Link))
+				{
+					href = $"/{menuItem.Controller}/";
+					if (!string.IsNullOrEmpty(menuItem.Action))
+					{
+						href += $"{menuItem.Action}/";
+					}
+				}
+				else
+				{
+					href = menuItem.Link;
+				}
+				
+				<li class="nav-item"><a class="nav-link" href="@href">@menuItem.Text</a></li>
 			}
 		}
 	}

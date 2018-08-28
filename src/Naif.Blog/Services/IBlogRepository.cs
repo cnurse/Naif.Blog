@@ -11,6 +11,8 @@ namespace Naif.Blog.Services
 
         Dictionary<string, int> GetTags(string blogId);
 
+        IEnumerable<string> GetThemes();
+
         void SaveBlogs(IEnumerable<Models.Blog> blogs);
 
         string SaveMedia(string blogid, MediaObject media);

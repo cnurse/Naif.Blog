@@ -1,4 +1,6 @@
 ﻿@using Naif.Blog.ViewModels
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 @model BlogViewModel
 
@@ -8,44 +10,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@Model.Blog.Title</title>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/jqcloud/jqcloud.min.css" />
+    <vc:client-dependency></vc:client-dependency>
+
     <link rel="stylesheet" href="~/themes/default/default.css" />
-    <script type="text/javascript" src="~/lib/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="~/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="~/lib/jqcloud/jqcloud.min.js"></script>
     <link href="~/wlwmanifest.xml" rel="wlwmanifest" type="application/wlwmanifest+xml">
 </head>
 <body>
-<div class="navbar navbar-inverse">
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" role="navigation">    
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a asp-controller="Post" asp-action="Index" class="navbar-brand">@Model.Blog.Title</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li>
-                    <a asp-controller="Post" asp-action="Index">Home</a>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
+        <a class="navbar-brand" asp-controller="Post" asp-action="Index">@Model.Blog.Title</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu" aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarMenu">
+            <vc:navigation parent="0"></vc:navigation>
+            <ul class="navbar-nav justify-content-end">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li><a asp-controller="Account" asp-action="Profile">@User.Identity.Name</a></li>
-                    <li><a asp-controller="Account" asp-action="Logout">Logout</a></li>
+                    if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminRole")).Succeeded)
+                    {
+                        <li class="nav-item"><a asp-controller="Admin" asp-action="Index" class="nav-link">Admin</a></li>
+                    }
+                    <li class="nav-item"><a asp-controller="Account" asp-action="Profile" class="nav-link">@User.Identity.Name</a></li>
+                    <li class="nav-item"><a asp-controller="Account" asp-action="Logout" class="nav-link">Logout</a></li>
                 }
             </ul>
         </div>
     </div>
-</div>
+</nav>
 <div class="container body-content">
     <div class="row">
         <div class="col-md-12">

@@ -1,14 +1,11 @@
-﻿@using Naif.Blog.Models
+﻿@using Microsoft.AspNetCore.Routing
+@using Naif.Blog.Models
 @using Naif.Blog.ViewModels;
 
 @model PagedListViewModel
 
 @{
-    var returnUrl = Model.IsPage ? "/page/list" :"/post/list";
-    if (ViewBag.PageIndex > 0)
-    {
-        returnUrl += $"/?page={Model.Pager.PageIndex}";
-    }
+    var returnUrl = Url.Action("List", Model.IsPage ? "Page" :"Post", new RouteValueDictionary {{"filter", Model.Pager.Filter}, {"page", Model.Pager.PageIndex}});
     var controller = Model.IsPage ? "Page" : "Post";
     var action = Model.IsPage ? "EditPage" : "EditPost";
 }

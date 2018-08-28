@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Naif.Blog.XmlRpc;
 using Newtonsoft.Json;
 
@@ -13,7 +15,7 @@ namespace Naif.Blog.Models
             Categories = new string[] { };
             Content = String.Empty;
             Excerpt = String.Empty;
-            IsPublished = true;
+            IsPublished = false;
             Keywords = String.Empty;
             LastModified = DateTime.UtcNow;
             PubDate = DateTime.UtcNow;
@@ -53,14 +55,15 @@ namespace Naif.Blog.Models
             get
             {
                 List<string> tags = new List<string>();
-                foreach(var tag in Keywords.Split(','))
+                if (!string.IsNullOrEmpty(Keywords))
                 {
-                    tags.Add(tag.Trim());
+                    tags.AddRange(Keywords.Split(',').Select(tag => tag.Trim()));
                 }
                 return tags;
             }
         }
 
+        [Required]
         [XmlRpcProperty("title")]
         public string Title { get; set; }
     }

@@ -2,10 +2,10 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Naif.Blog.Models
-@model Post
+@model Page
 
 @{
-    var returnUrl = $"/post/{Model.Slug}";
+    var returnUrl = $"/page/{Model.Slug}";
 }
 
 <article class="post">
@@ -17,8 +17,8 @@
             <div class="col-md-2">
                 @if ((await AuthorizationService.AuthorizeAsync(User, "RequireAdminRole")).Succeeded)
                 {
-                    <a asp-controller="Post" asp-action="EditPost" asp-route-id="@Model.PostId" asp-route-returnUrl="@returnUrl" class="edit">
-                        <i class="fas fa-pencil-alt"></i>
+                    <a asp-controller="Page" asp-action="EditPage" asp-route-id="@Model.PageId" asp-route-returnUrl="@returnUrl" class="edit">
+                        <span class="glyphicon glyphicon-pencil"></span>
                     </a>
                 }
             </div>
@@ -27,14 +27,14 @@
             Category:
             @foreach (var category in Model.Categories)
             {
-                <span><a asp-controller="Post" asp-action="ViewCategory" asp-route-category="@category">@category</a></span>
+                <span>@category</span>
             }
         </div>
         <div>
             Tags:
             @foreach (var tag in Model.Tags)
             {
-                <span><a asp-controller="Post" asp-action="ViewTag" asp-route-tag="@tag">@tag</a></span>
+                <span>@tag</span>
             }
         </div>
         <div>Last Modified: @Model.LastModified.ToString("MMM d yyyy")</div>

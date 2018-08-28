@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Naif.Blog.Framework;
 using Naif.Blog.Services;
 using Naif.Blog.ViewModels;
@@ -20,7 +21,8 @@ namespace Naif.Blog.Controllers
         {
             var blogViewModel = new BlogViewModel
             {
-                Blog = Blog
+                Blog = Blog,
+                Themes = BlogRepository.GetThemes().Select(t => new SelectListItem { Value = t, Text = t }).ToList()
             };
             
             // ReSharper disable once Mvc.ViewNotResolved

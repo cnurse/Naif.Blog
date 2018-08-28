@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Naif.Blog.Framework;
 
 namespace Naif.Blog.Services
 {
@@ -16,13 +17,10 @@ namespace Naif.Blog.Services
         protected FileRepositoryBase(IHostingEnvironment env, IMemoryCache memoryCache)
         {
             MemoryCache = memoryCache;
-            FilesFolder = "/posts/{0}/files/";
             RootFolder = env.WebRootPath;
         }
 
         protected abstract string FileExtension { get; }
-
-        protected string FilesFolder { get; }
 
         protected ILogger Logger {get; set;}
 
@@ -47,7 +45,7 @@ namespace Naif.Blog.Services
             return string.Format(cachekey, blogId);
         }
 
-        private string GetFolder(string folderKey, string blogId)
+        protected string GetFolder(string folderKey, string blogId)
         {
             return string.Format(folderKey, RootFolder, blogId);
         }
@@ -55,25 +53,11 @@ namespace Naif.Blog.Services
         protected IList<T> GetObjects<T>(string cacheKeyTemplate, string folderKey, string blogId, Func<string, string, T> func) where T : PostBase
         {
             var cacheKey = GetCacheKey(cacheKeyTemplate, blogId);
-            IList<T> list;
-            
-            if (!MemoryCache.TryGetValue(cacheKey, out list))
-            {
-                // fetch the value from the source
-                list = GetObjects(folderKey, blogId, (f, id) => func(f, id)).ToList();
 
-                // store in the cache
-                MemoryCache.Set(cacheKey,
-                    list,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)));
-                Logger.LogInformation($"{cacheKey} updated from source.");
-            }
-            else
-            {
-                Logger.LogInformation($"{cacheKey} retrieved from cache.");
-            }
-
-            return list;
+            return MemoryCache.GetObject(cacheKey, 
+                                    Logger, 
+                                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)), 
+                                    () => GetObjects(folderKey, blogId, func).ToList());
         }
 
         private IList<T> GetObjects<T>(string folder, string blogId, Func<string, string, T> func) where T : PostBase 

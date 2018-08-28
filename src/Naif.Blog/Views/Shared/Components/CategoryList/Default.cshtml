@@ -9,7 +9,8 @@
                 foreach(var category in Model)
                 {
                     var linkText = $"{category.Key} - ({category.Value})";
-                    <li><h4><a asp-controller="Post" asp-action="ViewCategory" asp-route-category="@category.Key">@linkText</a></h4></li>
+                    var link = $"/category/{category.Key}";
+                    <li><h4><a href="@link">@linkText</a></h4></li>
                 }
             }
         </ul>

@@ -7,6 +7,7 @@ namespace Naif.Blog.Models
         public string Action { get; set; }
         public string Controller { get; set; }
         public string CssClass { get; set; }
+        public string Filter { get; set; }
         public bool HasPreviousPage { get; set; }
         public bool HasNextPage { get; set; }
         public string NextCssClass { get; set; }

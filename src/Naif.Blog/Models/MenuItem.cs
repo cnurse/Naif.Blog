@@ -1,4 +1,6 @@
-﻿namespace Naif.Blog.Models
+﻿using System.Collections.Generic;
+
+namespace Naif.Blog.Models
 {
     public class MenuItem
     {
@@ -8,7 +10,8 @@
         
         public bool IsActive { get; set; }
         
+        public string Link { get; set; }
+
         public string Text { get; set; }
-        
     }
 }

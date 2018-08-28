@@ -6,6 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using Naif.Blog.Framework;
 using Newtonsoft.Json;
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -16,41 +17,40 @@ namespace Naif.Blog.Services
         private string _blogsCacheKey = "blogs";
         private readonly string _blogsFile;
         private readonly IPostRepository _postRepository;
-        
+        private readonly string _filesFolder;
+        private readonly string _fileUrl;
+        private string _themesCacheKey = "themes";
+        private readonly string _themesFolder;
+
         public FileBlogRepository(IHostingEnvironment env, IMemoryCache memoryCache, ILoggerFactory loggerFactory, IPostRepository postRepository) :base(env, memoryCache)
         {
             Logger = loggerFactory.CreateLogger<FileBlogRepository>();
             _postRepository = postRepository;
-            _blogsFile = env.WebRootPath + "/blogs.json";
+            _filesFolder = "{0}/posts/{1}/files/";
+            _fileUrl = "/posts/{0}/files/{1}";
+            _blogsFile = env.WebRootPath + @"\blogs.json";
+            _themesFolder = env.WebRootPath + @"\themes\";
         }
 
         protected override string FileExtension { get; }
 
         public IEnumerable<Models.Blog> GetBlogs()
         {
-            IList<Models.Blog> blogs;
-
-            if (!MemoryCache.TryGetValue(_blogsCacheKey, out blogs))
-            {
-                // fetch the value from the source
-                using (StreamReader reader = File.OpenText(_blogsFile))
+            return MemoryCache.GetObject(_blogsCacheKey, Logger,
+                new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
+                () =>
                 {
-                    var json = reader.ReadToEnd();
-                    blogs = JsonConvert.DeserializeObject<IList<Models.Blog>>(json);
-                }
+                    IList<Models.Blog> blogs;
+                    
+                    // fetch the value from the source
+                    using (StreamReader reader = File.OpenText(_blogsFile))
+                    {
+                        var json = reader.ReadToEnd();
+                        blogs = JsonConvert.DeserializeObject<IList<Models.Blog>>(json);
+                    }
 
-                // store in the cache
-                MemoryCache.Set(_blogsCacheKey,
-                    blogs,
-                    new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)));
-                Logger.LogInformation($"{_blogsCacheKey} updated from source.");
-            }
-            else
-            {
-                Logger.LogInformation($"{_blogsCacheKey} retrieved from cache.");
-            }
-
-            return blogs;
+                    return blogs;
+                });
         }
 
         public Dictionary<string, int> GetCategories(string blogId)
@@ -75,6 +75,23 @@ namespace Naif.Blog.Services
             return result;
         }
 
+        public IEnumerable<string> GetThemes()
+        {
+            return MemoryCache.GetObject(_themesCacheKey, Logger,
+                new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
+                () =>
+                {
+                    IList<string> themes = new List<string>();
+
+                    foreach (var directory in Directory.GetDirectories(_themesFolder))
+                    {
+                        themes.Add(directory.Replace(_themesFolder, string.Empty));
+                    }
+                    
+                    return themes;
+                });
+        }
+
         public void SaveBlogs(IEnumerable<Models.Blog> blogs)
         {
             using (StreamWriter w = File.CreateText(_blogsFile))
@@ -90,9 +107,9 @@ namespace Naif.Blog.Services
             Logger.LogInformation($"{_blogsCacheKey} cleared.");
         }
         
-        public string SaveMedia(string blogid, MediaObject media)
+        public string SaveMedia(string blogId, MediaObject media)
         {
-            var filesFolder = String.Format(FilesFolder, blogid);
+            var filesFolder = GetFolder(_filesFolder, blogId);
 
             if (!Directory.Exists(filesFolder))
             {
@@ -101,7 +118,7 @@ namespace Naif.Blog.Services
 
             string extension = Path.GetExtension(media.Name);
 
-            string relative = filesFolder + Guid.NewGuid();
+            string fileName = Guid.NewGuid().ToString();
 
             if (string.IsNullOrWhiteSpace(extension))
             {
@@ -112,13 +129,13 @@ namespace Naif.Blog.Services
                 extension = "." + extension.Trim('.');
             }
 
-            relative += extension;
+            fileName += extension;
 
-            string file = RootFolder + relative.Replace("/", "\\");
+            string file = Path.Combine(filesFolder, fileName);
 
             File.WriteAllBytes(file, media.Bits);
 
-            return relative;
+            return String.Format(_fileUrl, blogId, fileName);
         }
 
     }
