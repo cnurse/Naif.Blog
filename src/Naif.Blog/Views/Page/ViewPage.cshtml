@@ -2,6 +2,13 @@
 
 @model BlogViewModel
 
+@{
+    if(!string.IsNullOrEmpty(Model.Page.PageTemplate))
+    {
+        Layout = $"~/Views/Themes/{Model.Blog.Theme}/Templates/{Model.Page.PageTemplate}.cshtml";
+    }
+}
+
 <section>
     <vc:page page="@Model.Page"></vc:page>
 </section>

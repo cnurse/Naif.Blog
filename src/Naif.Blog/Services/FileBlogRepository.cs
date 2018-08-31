@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Naif.Blog.Framework;
 using Newtonsoft.Json;
 // ReSharper disable ClassNeverInstantiated.Global
@@ -19,10 +21,17 @@ namespace Naif.Blog.Services
         private readonly IPostRepository _postRepository;
         private readonly string _filesFolder;
         private readonly string _fileUrl;
+        private string _templatesCacheKey = "templates";
+        private readonly string _templatesFolder;
         private string _themesCacheKey = "themes";
         private readonly string _themesFolder;
-
-        public FileBlogRepository(IHostingEnvironment env, IMemoryCache memoryCache, ILoggerFactory loggerFactory, IPostRepository postRepository) :base(env, memoryCache)
+        private readonly RazorViewEngineOptions _viewEngineOptions;
+        
+        public FileBlogRepository(IHostingEnvironment env, 
+                                    IOptions<RazorViewEngineOptions> optionsAccessor,
+                                    IMemoryCache memoryCache, 
+                                    ILoggerFactory loggerFactory, 
+                                    IPostRepository postRepository) :base(env, memoryCache)
         {
             Logger = loggerFactory.CreateLogger<FileBlogRepository>();
             _postRepository = postRepository;
@@ -30,13 +39,15 @@ namespace Naif.Blog.Services
             _fileUrl = "/posts/{0}/files/{1}";
             _blogsFile = env.WebRootPath + @"\blogs.json";
             _themesFolder = env.WebRootPath + @"\themes\";
+            _viewEngineOptions = optionsAccessor.Value;
         }
 
         protected override string FileExtension { get; }
 
         public IEnumerable<Models.Blog> GetBlogs()
         {
-            return MemoryCache.GetObject(_blogsCacheKey, Logger,
+            return MemoryCache.GetObject(_blogsCacheKey, 
+                Logger,
                 new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
                 () =>
                 {
@@ -75,20 +86,45 @@ namespace Naif.Blog.Services
             return result;
         }
 
-        public IEnumerable<string> GetThemes()
+        public IEnumerable<string> GetTemplates(string blogId)
         {
-            return MemoryCache.GetObject(_themesCacheKey, Logger,
+            return MemoryCache.GetObject(_templatesCacheKey, 
+                Logger,
                 new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
                 () =>
                 {
-                    IList<string> themes = new List<string>();
+                    IList<string> templates = new List<string>();
 
-                    foreach (var directory in Directory.GetDirectories(_themesFolder))
+                    var blog = GetBlogs().SingleOrDefault(b => b.Id == blogId);
+
+                    if (blog != null)
                     {
-                        themes.Add(directory.Replace(_themesFolder, string.Empty));
+
+                        foreach (var fileProvider in _viewEngineOptions.FileProviders)
+                        {
+                            var files = fileProvider.GetDirectoryContents($"/Views/Themes/{blog.Theme}/Templates");
+                            if (files.Exists)
+                            {
+                                foreach (var file in files)
+                                {
+                                    templates.Add(file.Name.Replace(".cshtml", ""));
+                                }
+                            }
+                        }
                     }
-                    
-                    return themes;
+
+                    return templates;
+                });
+        }
+
+        public IEnumerable<string> GetThemes()
+        {
+            return MemoryCache.GetObject(_themesCacheKey, 
+                Logger,
+                new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromHours(2)),
+                () =>
+                {
+                    return Directory.GetDirectories(_themesFolder).Select(directory => directory.Replace(_themesFolder, string.Empty)).ToList();
                 });
         }
 

@@ -36,6 +36,7 @@ namespace Naif.Blog.Controllers
         {
             return DisplayListView(0, string.Empty, "List");
         }
+        
         [HttpPost]
         [Authorize(Policy = "RequireAdminRole")]
         public IActionResult CreatePage([FromForm] Page page, string returnUrl)
@@ -66,8 +67,9 @@ namespace Naif.Blog.Controllers
             {
                 Blog = Blog,
                 Categories = BlogRepository.GetCategories(Blog.Id).Select(c => new SelectListItem { Value = c.Key, Text = c.Key }).ToList(),
+                Page = page,
                 Pages = _pageRepository.GetAllPages(Blog.Id),
-                Page = page
+                PageTemplates = BlogRepository.GetTemplates(Blog.Id).Select(t => new SelectListItem { Value = t, Text = t }).ToList()
             };
 
             ViewBag.IsNew = false;
@@ -118,6 +120,7 @@ namespace Naif.Blog.Controllers
                 match.Title = page.Title;
                 match.Excerpt = page.Excerpt;
                 match.Content = page.Content;
+                match.PageTemplate = page.PageTemplate;
 
                 if (!string.Equals(match.Slug, page.Slug, StringComparison.OrdinalIgnoreCase) || string.IsNullOrEmpty(match.Slug))
                 {

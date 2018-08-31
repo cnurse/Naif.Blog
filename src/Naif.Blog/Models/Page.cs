@@ -14,13 +14,15 @@ namespace Naif.Blog.Models
         
         [XmlRpcProperty("page_id")]
         public string PageId { get; set; }
+        
+        [Display(Name="Page Template")]
+        public string PageTemplate { get; set; }
+
+        [Display(Name="Page Type")]
+        public PageType PageType { get; set; }
 
         [XmlRpcProperty("wp_page_parent_id")]
         [Display(Name="Parent Page")]
         public string ParentPageId { get; set; }
-        
-        [Display(Name="Page Type")]
-        public PageType PageType { get; set; }
-
     }
 }

@@ -18,6 +18,8 @@ namespace Naif.Blog.ViewModels
 
         public IEnumerable<Page> Pages { get; set; }
 
+        public List<SelectListItem> PageTemplates { get; set; }
+
         public Post Post { get; set; }
 
         public IEnumerable<Post> Posts { get; set; }
