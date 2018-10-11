@@ -7,6 +7,10 @@ using Naif.Blog.Framework;
 using Naif.Blog.Services;
 using Microsoft.AspNetCore.Builder;
 using System.IO;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
+using Naif.Blog.Controllers;
 using Naif.Blog.Routing;
 using Naif.Blog.Security;
 
@@ -44,11 +48,11 @@ namespace Naif.Blog
 	        
 	        Auth0Config.ConfigureServices(services, Configuration);
 
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.Configure<RazorViewEngineOptions>(options =>
             {
-                options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
+               options.ViewLocationExpanders.Add(new ThemeViewLocationExpander());
             });
 	        
 	        services.AddAuthorization(options =>

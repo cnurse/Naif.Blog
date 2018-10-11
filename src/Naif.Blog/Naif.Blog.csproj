@@ -3,6 +3,8 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>Naif.Blog</AssemblyName>
     <PackageId>Naif.Blog</PackageId>
+    <RazorCompileOnBuild>false</RazorCompileOnBuild>
+    <RazorCompileOnPublish>false</RazorCompileOnPublish>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
@@ -18,17 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Services\XmlBlogRepository.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.eot" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.svg" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.ttf" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.woff" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\fonts\glyphicons-halflings-regular.woff2" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap-multiselect\css\bootstrap-multiselect.css" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap-multiselect\js\bootstrap-multiselect-collapsible-groups.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap-multiselect\js\bootstrap-multiselect.js" />
-    <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap-multiselect\less\bootstrap-multiselect.less" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Themes\nursefamily\nursefamily.css">
