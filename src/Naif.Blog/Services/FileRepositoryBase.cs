@@ -6,7 +6,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Naif.Blog.Framework;
 
 namespace Naif.Blog.Services
@@ -14,7 +13,7 @@ namespace Naif.Blog.Services
     public abstract class FileRepositoryBase
     {
 
-        protected FileRepositoryBase(IHostingEnvironment env, IMemoryCache memoryCache)
+        protected FileRepositoryBase(IWebHostEnvironment env, IMemoryCache memoryCache)
         {
             MemoryCache = memoryCache;
             RootFolder = env.WebRootPath;

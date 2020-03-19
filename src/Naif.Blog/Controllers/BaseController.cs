@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Framework;
 using Naif.Blog.Services;
-using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 
 namespace Naif.Blog.Controllers
@@ -21,7 +19,7 @@ namespace Naif.Blog.Controllers
 
         protected IBlogRepository BlogRepository { get; set; }
 
-        public string CreateSlug(string title)
+        protected string CreateSlug(string title)
         {
             title = title.ToLowerInvariant().Replace(" ", "-");
             title = RemoveDiacritics(title);

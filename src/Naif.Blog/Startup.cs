@@ -7,11 +7,7 @@ using Naif.Blog.Framework;
 using Naif.Blog.Services;
 using Microsoft.AspNetCore.Builder;
 using System.IO;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
-using Naif.Blog.Controllers;
-using Naif.Blog.Routing;
+using Microsoft.Extensions.Hosting;
 using Naif.Blog.Security;
 
 namespace Naif.Blog
@@ -19,7 +15,7 @@ namespace Naif.Blog
 	// ReSharper disable once ClassNeverInstantiated.Global
 	public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             // Set up configuration providers.
             var builder = new ConfigurationBuilder()
@@ -48,7 +44,8 @@ namespace Naif.Blog
 	        
 	        Auth0Config.ConfigureServices(services, Configuration);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc()
+	            .AddRazorRuntimeCompilation();
 
             services.Configure<RazorViewEngineOptions>(options =>
             {
@@ -64,7 +61,7 @@ namespace Naif.Blog
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 	    // ReSharper disable once UnusedMember.Global
 	    // ReSharper disable once UnusedParameter.Global
-	    public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+	    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -83,57 +80,15 @@ namespace Naif.Blog
 	        
 	        app.UseStatusCodePagesWithReExecute("/Error/Code/{0}");
 
-            app.UseMvc(routes =>
+	        app.UseRouting();
+
+	        app.UseMetaWeblog();
+
+	        app.UseAuthorization();
+
+            app.UseEndpoints(endpoints  =>
             {
-				routes.MapRoute(
-						name: "post",
-						template: "post/{action}",
-						defaults: new
-						{
-							controller = "Post",
-							action = "Index"
-						})
-					.MapRoute(
-						name: "blogPost",
-						template: "post/{*slug}",
-						defaults: new {
-							controller = "Post",
-							action = "ViewPost"
-						})
-					.MapRoute(
-						name: "blogCategory",
-						template: "category/{*category}",
-						defaults: new
-						{
-							controller = "Post",
-							action = "ViewCategory"
-						})
-					.MapRoute(
-						name: "blogTag",
-						template: "tag/{*tag}",
-						defaults: new
-						{
-							controller = "Post",
-							action = "ViewTag"
-						})
-					.MapRoute(
-						name: "page",
-						template: "page/{action}",
-						defaults: new {
-							controller = "Page",
-							action = "Index"
-						})
-					.MapRoute(
-						name: "viewPage",
-						template: "page/{*slug}",
-						defaults: new {
-							controller = "Page",
-							action = "ViewPage"
-						})
-					.MapRoute(
-						name: "default",
-						template: "{controller=Post}/{action=Index}/{id?}")
-                    .MapMetaWeblogRoute();
+	            endpoints.MapControllers();
             });
         }
     }

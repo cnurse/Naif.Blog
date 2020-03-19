@@ -1,6 +1,5 @@
 ﻿using Naif.Blog.XmlRpc;
 using System;
-using System.Collections.Generic;
 
 namespace Naif.Blog.Models
 {

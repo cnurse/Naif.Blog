@@ -10,6 +10,7 @@ using Naif.Blog.ViewModels;
 
 namespace Naif.Blog.Controllers
 {
+    [Route("Page")]
     public class PageController : BaseController
     {
         private readonly IPageRepository _pageRepository;
@@ -25,6 +26,7 @@ namespace Naif.Blog.Controllers
             _pageRepository = pageRepository;
         }
         
+        [Route("Cancel/{returnUrl}")]
         public IActionResult Cancel(string returnUrl)
         {
             return Redirect(returnUrl);
@@ -32,6 +34,7 @@ namespace Naif.Blog.Controllers
         
         [HttpGet]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("Clear")]
         public IActionResult Clear()
         {
             return DisplayListView(0, string.Empty, "List");
@@ -39,6 +42,7 @@ namespace Naif.Blog.Controllers
         
         [HttpPost]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("CreatePage/{returnUrl}")]
         public IActionResult CreatePage([FromForm] Page page, string returnUrl)
         {
             page.BlogId = Blog.Id;
@@ -53,7 +57,9 @@ namespace Naif.Blog.Controllers
             return Redirect(returnUrl);
         }
 
+        [HttpGet]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("EditPage/{id}/{returnUrl}")]
         public IActionResult EditPage(string id, string returnUrl)
         {
             var page = _pageRepository.GetAllPages(Blog.Id).SingleOrDefault(p => p.PageId == id);
@@ -80,6 +86,7 @@ namespace Naif.Blog.Controllers
         
         [HttpGet]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("{filter}/{page}")]
         public IActionResult List(string filter, int? page)
         {
             return DisplayListView(page, filter, "List");
@@ -111,6 +118,7 @@ namespace Naif.Blog.Controllers
         
         [HttpPost]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("SavePage/{returnUrl}")]
         public IActionResult SavePage([FromForm] Page page, string returnUrl)
         {
             var match = _pageRepository.GetAllPages(Blog.Id).SingleOrDefault(p => p.PageId == page.PageId);
@@ -137,6 +145,7 @@ namespace Naif.Blog.Controllers
             return Redirect(returnUrl);
         }
 
+        [Route("{slug}")]
         public IActionResult ViewPage(string slug)
         {
             var page = _pageRepository.GetAllPages(Blog.Id).SingleOrDefault(p => p.Slug == slug);

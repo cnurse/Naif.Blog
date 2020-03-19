@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Naif.Blog.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Linq;
 // ReSharper disable ConvertClosureToMethodGroup
@@ -15,7 +13,7 @@ namespace Naif.Blog.Services
         private readonly string _postsCacheKey;
         private readonly string _postsFolder;
 
-        protected FilePostRepository(IHostingEnvironment env, IMemoryCache memoryCache) : base(env, memoryCache)
+        protected FilePostRepository(IWebHostEnvironment env, IMemoryCache memoryCache) : base(env, memoryCache)
         {
             _postsCacheKey = "{0}_posts";
             _postsFolder = Path.Combine("{0}", "posts", "{1}");

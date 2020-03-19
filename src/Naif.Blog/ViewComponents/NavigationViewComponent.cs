@@ -27,28 +27,31 @@ namespace Naif.Blog.ViewComponents
                 Items = new List<MenuItem>()
             };
 
-            foreach(var page in _pageRepository.GetAllPages(Blog.Id).Where(p => p.ParentPageId == parent))
+            await Task.Run(() =>
             {
-                if (page.PageType == PageType.Blog)
+                foreach(var page in _pageRepository.GetAllPages(Blog.Id).Where(p => p.ParentPageId == parent))
                 {
-                    menu.Items.Add(new MenuItem
+                    if (page.PageType == PageType.Blog)
                     {
-                        Controller = "Post",
-                        Action = "Index",
-                        IsActive = false,
-                        Text = page.Title
-                    });
-                }
-                else
-                {
-                    menu.Items.Add(new MenuItem
+                        menu.Items.Add(new MenuItem
+                        {
+                            Controller = "Post",
+                            Action = "Index",
+                            IsActive = false,
+                            Text = page.Title
+                        });
+                    }
+                    else
                     {
-                        IsActive = false,
-                        Link = $"/page/{page.Slug}",
-                        Text = page.Title
-                    });
+                        menu.Items.Add(new MenuItem
+                        {
+                            IsActive = false,
+                            Link = $"/page/{page.Slug}",
+                            Text = page.Title
+                        });
+                    }
                 }
-            }
+            });
 
             // ReSharper disable once Mvc.ViewComponentViewNotResolved
             return View(menu);

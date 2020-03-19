@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Naif.Blog.Models;
 
+#pragma warning disable 1998
+
 namespace Naif.Blog.ViewComponents
 {
     public class PagerViewComponent : ViewComponent

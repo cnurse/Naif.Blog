@@ -10,7 +10,8 @@ using Naif.Blog.ViewModels;
 
 namespace Naif.Blog.Controllers
 {
-	public class PostController : BaseController
+	[Route("Post")]
+    public class PostController : BaseController
     {
         private readonly IPostRepository _postRepository;
         private readonly IAuthorizationService _authorizationService;
@@ -25,6 +26,8 @@ namespace Naif.Blog.Controllers
             _postRepository = postRepository;
         }
 
+        [HttpGet]
+        [Route("Cancel/{returnUrl}")]
         public IActionResult Cancel(string returnUrl)
         {
             return Redirect(returnUrl);
@@ -32,12 +35,15 @@ namespace Naif.Blog.Controllers
         
         [HttpGet]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("Clear")]
         public IActionResult Clear()
         {
             return DisplayListView(0, string.Empty, "List");
         }
 
+        [HttpGet]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("EditPost/{id}/{returnUrl}")]
         public IActionResult EditPost(string id, string returnUrl)
         {
             var post = _postRepository.GetAllPosts(Blog.Id).SingleOrDefault(p => p.PostId == id);
@@ -58,8 +64,11 @@ namespace Naif.Blog.Controllers
 
             return View("EditPost", blogViewModel);
         }
-
+        
         [HttpGet]
+        [Route("")]
+        [Route("Index/{page?}")]
+        [Route("/{page?}")]
         public IActionResult Index(int? page)
         {
             return DisplayListView(page, string.Empty, "Index");
@@ -67,12 +76,14 @@ namespace Naif.Blog.Controllers
 
         [HttpGet]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("{filter}/{page?}")]
         public IActionResult List(string filter, int? page)
         {
             return DisplayListView(page, filter, "List");
         }
 
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("NewPost/{returnUrl}")]
         public IActionResult NewPost(string returnUrl)
         {
             var post = new Post
@@ -95,6 +106,7 @@ namespace Naif.Blog.Controllers
         
         [HttpPost]
         [Authorize(Policy = "RequireAdminRole")]
+        [Route("SavePost/{returnUrl}")]
         public IActionResult SavePost([FromForm] Post post, string returnUrl)
         {
             var match = _postRepository.GetAllPosts(Blog.Id).SingleOrDefault(p => p.PostId == post.PostId);
@@ -120,6 +132,8 @@ namespace Naif.Blog.Controllers
             return Redirect(returnUrl);
         }
 
+        [HttpGet]
+        [Route("~/category/{category}/{page?}")]
         public IActionResult ViewCategory(string category, int? page)
         {
             var blogViewModel = new BlogViewModel
@@ -133,6 +147,8 @@ namespace Naif.Blog.Controllers
             return View("Index", blogViewModel);
         }
 
+        [HttpGet]
+        [Route("{slug}")]
         public IActionResult ViewPost(string slug)
         {
             var post = _postRepository.GetAllPosts(Blog.Id).SingleOrDefault(p => p.Slug == slug);
@@ -153,6 +169,8 @@ namespace Naif.Blog.Controllers
             return View("ViewPost", blogViewModel);
         }
 
+        [HttpGet]
+        [Route("~/tag/{tag}/{page?}")]
         public IActionResult ViewTag(string tag, int? page)
         {
             var blogViewModel = new BlogViewModel

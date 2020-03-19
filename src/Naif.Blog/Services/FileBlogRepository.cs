@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Razor;
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Naif.Blog.Framework;
@@ -22,13 +22,12 @@ namespace Naif.Blog.Services
         private readonly string _filesFolder;
         private readonly string _fileUrl;
         private string _templatesCacheKey = "templates";
-        private readonly string _templatesFolder;
         private string _themesCacheKey = "themes";
         private readonly string _themesFolder;
-        private readonly RazorViewEngineOptions _viewEngineOptions;
+        private readonly MvcRazorRuntimeCompilationOptions _razorRuntimeCompilationOptions;
         
-        public FileBlogRepository(IHostingEnvironment env, 
-                                    IOptions<RazorViewEngineOptions> optionsAccessor,
+        public FileBlogRepository(IWebHostEnvironment env, 
+                                    IOptions<MvcRazorRuntimeCompilationOptions> optionsAccessor,
                                     IMemoryCache memoryCache, 
                                     ILoggerFactory loggerFactory, 
                                     IPostRepository postRepository) :base(env, memoryCache)
@@ -39,7 +38,7 @@ namespace Naif.Blog.Services
             _fileUrl = "/posts/{0}/files/{1}";
             _blogsFile = env.WebRootPath + @"\blogs.json";
             _themesFolder = env.WebRootPath + @"\themes\";
-            _viewEngineOptions = optionsAccessor.Value;
+            _razorRuntimeCompilationOptions = optionsAccessor.Value;
         }
 
         protected override string FileExtension { get; }
@@ -100,7 +99,7 @@ namespace Naif.Blog.Services
                     if (blog != null)
                     {
 
-                        foreach (var fileProvider in _viewEngineOptions.FileProviders)
+                        foreach (var fileProvider in _razorRuntimeCompilationOptions.FileProviders)
                         {
                             var files = fileProvider.GetDirectoryContents($"/Views/Themes/{blog.Theme}/Templates");
                             if (files.Exists)

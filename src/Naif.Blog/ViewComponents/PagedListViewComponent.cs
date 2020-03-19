@@ -25,27 +25,32 @@ namespace Naif.Blog.ViewComponents
                 ? String.Empty
                 : ViewContext.RouteData.Values[actionParameter] as string;
 
-            var viewModel = new PagedListViewModel
+            PagedListViewModel viewModel = null;
+
+            await Task.Run(() =>
             {
-                IsPage = isPage,
-                Pager = new Pager
+                viewModel = new PagedListViewModel
                 {
-                    Action = actionName,
-                    Controller = controller,
-                    CssClass = "pagination",
-                    Filter = filter,
-                    HasNextPage = posts.HasNextPage,
-                    HasPreviousPage = posts.HasPreviousPage,
-                    NextCssClass = "right",
-                    NextText = "Next",
-                    PageCount = posts.PageCount,
-                    PageIndex = posts.PageIndex,
-                    PreviousCssClass = "left",
-                    PreviousText = "Previous",
-                    RouteValues = new Dictionary<string, object> {[actionParameter] = actionValue}
-                },
-                Posts = posts
-            };
+                    IsPage = isPage,
+                    Pager = new Pager
+                    {
+                        Action = actionName,
+                        Controller = controller,
+                        CssClass = "pagination",
+                        Filter = filter,
+                        HasNextPage = posts.HasNextPage,
+                        HasPreviousPage = posts.HasPreviousPage,
+                        NextCssClass = "right",
+                        NextText = "Next",
+                        PageCount = posts.PageCount,
+                        PageIndex = posts.PageIndex,
+                        PreviousCssClass = "left",
+                        PreviousText = "Previous",
+                        RouteValues = new Dictionary<string, object> {[actionParameter] = actionValue}
+                    },
+                    Posts = posts
+                };
+            });
 
             // ReSharper disable once Mvc.ViewComponentViewNotResolved
             return isTable.HasValue && isTable.Value ? View("Table", viewModel) : View(viewModel);

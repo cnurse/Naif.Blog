@@ -10,7 +10,7 @@ namespace Naif.Blog.Services
 {
     public class JsonPostRepository : FilePostRepository
     {
-        public JsonPostRepository(IHostingEnvironment env, IMemoryCache memoryCache, ILoggerFactory loggerFactory) : base(env, memoryCache)
+        public JsonPostRepository(IWebHostEnvironment env, IMemoryCache memoryCache, ILoggerFactory loggerFactory) : base(env, memoryCache)
         {
             Logger = loggerFactory.CreateLogger<JsonPostRepository>();
         }

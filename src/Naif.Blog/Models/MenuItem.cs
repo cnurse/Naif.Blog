@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Naif.Blog.Models
+﻿namespace Naif.Blog.Models
 {
     public class MenuItem
     {
